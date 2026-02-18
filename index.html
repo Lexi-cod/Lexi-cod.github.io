@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Interactive Portfolio</title>
+<title>Your Name | AI • UI/UX • Creative Technologist</title>
 
 <style>
 *{
@@ -11,17 +11,17 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 scroll-behavior:smooth;
-font-family: 'Segoe UI', sans-serif;
+font-family:'Inter', sans-serif;
 }
 
 body{
-background:#0f0f1a;
-color:white;
+background:#0d1117;
+color:#e6edf3;
 overflow-x:hidden;
 transition:0.4s;
 }
 
-.light-mode{
+.light{
 background:#f4f4f4;
 color:#111;
 }
@@ -33,30 +33,43 @@ left:0;
 z-index:-1;
 }
 
-/* NAVBAR */
+/* subtle grid overlay */
+body::after{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+background-image:linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+background-size:40px 40px;
+z-index:-2;
+}
+
+/* NAV */
 nav{
 position:fixed;
-top:-80px;
+top:0;
 width:100%;
 padding:15px 40px;
 display:flex;
 justify-content:space-between;
-align-items:center;
-background:rgba(0,0,0,0.6);
+background:rgba(13,17,23,0.7);
 backdrop-filter:blur(10px);
-transition:0.4s;
 z-index:1000;
 }
 
-nav.show{
-top:0;
+nav a{
+text-decoration:none;
+color:inherit;
+margin-left:20px;
+font-size:0.9rem;
+opacity:0.8;
+cursor:pointer;
 }
 
-nav a{
-color:white;
-text-decoration:none;
-margin:0 10px;
-cursor:pointer;
+nav a:hover{
+opacity:1;
+color:#58a6ff;
 }
 
 /* HERO */
@@ -67,40 +80,33 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
+padding:0 20px;
 }
 
-h1{
-font-size:3.5rem;
+header h1{
+font-size:3.2rem;
 }
 
 #typing{
-color:cyan;
 margin-top:10px;
 font-size:1.2rem;
+color:#58a6ff;
 height:30px;
 }
 
-/* BUTTONS */
-.btn{
+.tagline{
 margin-top:20px;
-padding:10px 20px;
-border:none;
-border-radius:20px;
-background:cyan;
-cursor:pointer;
-transition:0.3s;
-}
-
-.btn:hover{
-transform:scale(1.1);
+max-width:700px;
+opacity:0.75;
+line-height:1.7;
 }
 
 /* SECTIONS */
 section{
+padding:120px 12%;
 min-height:100vh;
-padding:100px 10%;
 opacity:0;
-transform:translateY(50px);
+transform:translateY(40px);
 transition:0.8s;
 }
 
@@ -110,74 +116,66 @@ transform:translateY(0);
 }
 
 h2{
-margin-bottom:20px;
-color:cyan;
+margin-bottom:25px;
+font-weight:500;
+font-size:2rem;
+border-left:4px solid #58a6ff;
+padding-left:10px;
 }
 
-/* CARDS */
-.card-container{
-display:flex;
-flex-wrap:wrap;
-gap:20px;
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:30px;
 }
 
 .card{
-width:250px;
-height:180px;
-perspective:1000px;
-}
-
-.inner{
-position:relative;
-width:100%;
-height:100%;
-transition:transform 0.8s;
-transform-style:preserve-3d;
-}
-
-.card:hover .inner{
-transform:rotateY(180deg);
-}
-
-.front,.back{
-position:absolute;
-width:100%;
-height:100%;
-backface-visibility:hidden;
-display:flex;
-justify-content:center;
-align-items:center;
-border-radius:15px;
-background:rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.05);
+padding:25px;
+border-radius:20px;
 backdrop-filter:blur(10px);
+transition:0.3s;
+border:1px solid rgba(255,255,255,0.05);
 }
 
-.back{
-transform:rotateY(180deg);
-background:rgba(0,255,255,0.3);
+.card:hover{
+transform:translateY(-8px);
+border-color:#58a6ff;
+}
+
+/* SKILLS BARS */
+.skill{
+margin-bottom:15px;
+}
+
+.bar{
+height:8px;
+background:rgba(255,255,255,0.1);
+border-radius:10px;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+background:#58a6ff;
+width:0;
+transition:1.5s;
 }
 
 /* RESEARCH SCROLL */
 .scroll-box{
 max-height:250px;
 overflow-y:auto;
-padding:15px;
-background:rgba(255,255,255,0.1);
+padding:20px;
 border-radius:15px;
-}
-
-.scroll-box ul{
-list-style:none;
-}
-
-.scroll-box li{
-margin-bottom:10px;
+background:rgba(255,255,255,0.05);
 }
 
 /* FOOTER */
 footer{
 text-align:center;
-padding:20px;
+padding:30px;
 opacity:0.6;
 }
 </style>
@@ -187,192 +185,201 @@ opacity:0.6;
 
 <canvas id="bg"></canvas>
 
-<nav id="navbar">
-<div>🚀 My Portfolio</div>
+<nav>
+<div><strong>Your Name</strong></div>
 <div>
 <a onclick="scrollToSection('about')">About</a>
-<a onclick="scrollToSection('experience')">Experience</a>
+<a onclick="scrollToSection('ai')">AI</a>
+<a onclick="scrollToSection('design')">UI/UX</a>
 <a onclick="scrollToSection('projects')">Projects</a>
 <a onclick="scrollToSection('research')">Research</a>
-<a onclick="scrollToSection('contact')">Contact</a>
-<button class="btn" onclick="toggleMode()">Toggle Mode</button>
+<a onclick="scrollToSection('life')">Life</a>
+<a onclick="toggleMode()">Mode</a>
 </div>
 </nav>
 
 <header>
-<h1>Hey, I'm Your Name 👋</h1>
+<h1>Hi, I'm Your Name</h1>
 <div id="typing"></div>
-<button class="btn" onclick="scrollToSection('about')">Enter My Universe ✨</button>
+<p class="tagline">
+I design intelligent systems and human-centered digital experiences.  
+Blending AI, UI/UX, creativity, and nature-inspired thinking.
+</p>
 </header>
 
 <section id="about">
 <h2>About Me</h2>
-<p>I build things, break things, and build them better. Passionate about tech, research, and innovation.</p>
+<p>
+I’m a creative technologist who believes the future of AI should feel human.
+My work sits at the intersection of artificial intelligence, thoughtful design, and storytelling.
+</p>
 </section>
 
-<section id="experience">
-<h2>Work Experience</h2>
-<p>Add internships, leadership roles, and achievements here.</p>
+<section id="ai">
+<h2>Artificial Intelligence</h2>
+<div class="grid">
+<div class="card">
+<h3>Machine Learning</h3>
+<p>Building predictive models and intelligent systems.</p>
+</div>
+<div class="card">
+<h3>Deep Learning</h3>
+<p>Exploring neural architectures and research-driven experimentation.</p>
+</div>
+<div class="card">
+<h3>AI Ethics</h3>
+<p>Designing systems that prioritize responsibility and human impact.</p>
+</div>
+</div>
+
+<br><br>
+
+<div class="skill">
+<p>Python / ML</p>
+<div class="bar"><div class="fill" style="width:85%"></div></div>
+</div>
+
+<div class="skill">
+<p>Deep Learning</p>
+<div class="bar"><div class="fill" style="width:75%"></div></div>
+</div>
+
+<div class="skill">
+<p>Data Analysis</p>
+<div class="bar"><div class="fill" style="width:80%"></div></div>
+</div>
+
+</section>
+
+<section id="design">
+<h2>UI / UX Philosophy</h2>
+<p>
+I believe great design is invisible. It guides, it feels natural, it reduces friction.
+My design approach is rooted in empathy, clarity, and aesthetic balance.
+</p>
 </section>
 
 <section id="projects">
 <h2>Projects</h2>
-<div class="card-container">
+<div class="grid">
 <div class="card">
-<div class="inner">
-<div class="front">Project 1</div>
-<div class="back">Description + GitHub link</div>
+<h3>AI Project</h3>
+<p>Short impact-driven description.</p>
 </div>
-</div>
-
 <div class="card">
-<div class="inner">
-<div class="front">Project 2</div>
-<div class="back">Description + Demo link</div>
-</div>
+<h3>UX Case Study</h3>
+<p>User-centered design with measurable outcomes.</p>
 </div>
 </div>
 </section>
 
 <section id="research">
-<h2>Research Papers Read 📚</h2>
+<h2>Research Papers Read</h2>
 <div class="scroll-box">
 <ul>
-<li>• Attention Is All You Need</li>
-<li>• GANs - Goodfellow</li>
-<li>• ResNet Paper</li>
-<li>• BERT: Pre-training of Deep Bidirectional Transformers</li>
-<li>• Diffusion Models</li>
-<li>• AlphaGo Paper</li>
-<li>• GPT Architecture Paper</li>
-<li>• Vision Transformers</li>
-<li>• Neural Style Transfer</li>
-<li>• Add as many as you like...</li>
+<li>Attention Is All You Need</li>
+<li>BERT</li>
+<li>Diffusion Models</li>
+<li>Vision Transformers</li>
+<li>GANs</li>
+<li>Human-Centered AI</li>
+<li>Ethics in Machine Learning</li>
 </ul>
 </div>
 </section>
 
-<section id="contact">
-<h2>Contact</h2>
-<p>Email: your@email.com</p>
-<p>GitHub: github.com/yourusername</p>
-<p>LinkedIn: linkedin.com/in/yourprofile</p>
+<section id="life">
+<h2>Beyond the Screen</h2>
+<div class="grid">
+<div class="card">
+<h3>📷 Photography</h3>
+<p>Capturing landscapes and quiet scenic moments.</p>
+</div>
+<div class="card">
+<h3>🎶 Music</h3>
+<p>Ukulele and singing — creativity beyond code.</p>
+</div>
+<div class="card">
+<h3>🌿 Nature</h3>
+<p>Nature inspires my calm, balanced design style.</p>
+</div>
+<div class="card">
+<h3>👨‍👩‍👧‍👦 Family</h3>
+<p>Grounded by the people who matter most.</p>
+</div>
+</div>
 </section>
 
 <footer>
-© 2026 Your Name — Built with chaos & creativity 😎
+© 2026 Your Name — AI • Design • Creativity
 </footer>
 
 <script>
-
-/* Smooth Scroll */
 function scrollToSection(id){
 document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
-/* Navbar reveal */
-window.addEventListener("scroll",function(){
-if(window.scrollY>200){
-document.getElementById("navbar").classList.add("show");
+function toggleMode(){
+document.body.classList.toggle("light");
 }
-});
 
-/* Typing effect */
-const textArray=["Developer 💻","Research Enthusiast 🧠","Creative Thinker 🎨","Problem Solver 🚀"];
-let i=0,j=0,currentText="",isDeleting=false;
+/* Typing */
+const text=["AI Engineer","UI/UX Thinker","Creative Developer","Nature-Inspired Designer"];
+let i=0,j=0,deleting=false;
 function type(){
-currentText=textArray[i];
-document.getElementById("typing").textContent=currentText.substring(0,j);
-if(!isDeleting && j<currentText.length){
-j++;
-setTimeout(type,100);
-}else if(isDeleting && j>0){
-j--;
-setTimeout(type,50);
-}else{
-isDeleting=!isDeleting;
-if(!isDeleting){i=(i+1)%textArray.length;}
-setTimeout(type,1000);
-}
+let current=text[i];
+document.getElementById("typing").textContent=current.substring(0,j);
+if(!deleting && j<current.length){ j++; setTimeout(type,100);}
+else if(deleting && j>0){ j--; setTimeout(type,50);}
+else{ deleting=!deleting; if(!deleting){i=(i+1)%text.length;} setTimeout(type,1000);}
 }
 type();
 
-/* Reveal sections */
+/* Reveal */
 const sections=document.querySelectorAll("section");
 window.addEventListener("scroll",()=>{
 sections.forEach(sec=>{
-const pos=sec.getBoundingClientRect().top;
-if(pos<window.innerHeight-100){
+if(sec.getBoundingClientRect().top < window.innerHeight-100){
 sec.classList.add("show");
 }
 });
 });
 
-/* Dark mode */
-function toggleMode(){
-document.body.classList.toggle("light-mode");
-}
-
-/* Particle Background */
+/* Particles */
 const canvas=document.getElementById("bg");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 let particles=[];
-
 class Particle{
 constructor(){
 this.x=Math.random()*canvas.width;
 this.y=Math.random()*canvas.height;
-this.size=Math.random()*3+1;
-this.speedX=Math.random()*1-0.5;
-this.speedY=Math.random()*1-0.5;
+this.size=Math.random()*2;
+this.speedY=Math.random()*0.4;
 }
 update(){
-this.x+=this.speedX;
 this.y+=this.speedY;
-if(this.x<0||this.x>canvas.width)this.speedX*=-1;
-if(this.y<0||this.y>canvas.height)this.speedY*=-1;
+if(this.y>canvas.height)this.y=0;
 }
 draw(){
 ctx.beginPath();
 ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-ctx.fillStyle="cyan";
+ctx.fillStyle="rgba(88,166,255,0.3)";
 ctx.fill();
 }
 }
-
 function init(){
 particles=[];
-for(let i=0;i<120;i++){
-particles.push(new Particle());
+for(let i=0;i<80;i++)particles.push(new Particle());
 }
-}
-
 function animate(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
-particles.forEach(p=>{
-p.update();
-p.draw();
-});
+particles.forEach(p=>{p.update();p.draw();});
 requestAnimationFrame(animate);
 }
 init();
 animate();
-
-window.addEventListener("resize",()=>{
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-init();
-});
-
-/* Easter Egg */
-document.addEventListener("keydown",function(e){
-if(e.key==="*"){
-alert("🎉 You found the secret star mode!");
-}
-});
-
 </script>
 
 </body>
