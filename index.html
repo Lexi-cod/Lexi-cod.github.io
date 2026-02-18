@@ -1,270 +1,677 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Name | Creative Technologist</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Your Name — Creative Technologist</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+  /* ---- base tokens ---- */
+  :root{
+    --bg-anim-opacity:1;
+    --text:#eaf0f6;
+    --muted:rgba(234,240,246,0.8);
+    --accent:#6fbff6;
+    --card-bg: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.04);
+    --radius:14px;
+    --transition:700ms cubic-bezier(.2,.9,.22,1);
+    --shadow: 0 18px 40px rgba(2,6,23,0.45);
+    --reduced-motion: no-preference;
+  }
 
-:root{
-  --bg1:#0f172a;
-  --bg2:#1e293b;
-  --accent:#60a5fa;
-  --text:#f1f5f9;
-  --muted:#94a3b8;
-  --transition: 700ms cubic-bezier(.22,.9,.24,1);
-}
+  @media (prefers-reduced-motion: reduce){
+    :root{ --reduced-motion: reduce; }
+  }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+  html,body{height:100%;margin:0;background:#071022;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+  .app{min-height:100vh;display:flex;flex-direction:column;}
 
-body{
-  font-family:'Inter',sans-serif;
-  color:var(--text);
-  background:linear-gradient(160deg,var(--bg1),var(--bg2));
-  transition:background var(--transition), color var(--transition);
-  overflow-x:hidden;
-}
+/* ---- cinematic backgrounds (base) ---- */
+  .bg-root{
+    position:fixed; inset:0; z-index:-20; overflow:hidden;
+    transition: background var(--transition), color var(--transition);
+    background: linear-gradient(180deg,#071022 0%,#0f2233 100%);
+  }
+  .bg-vignette{ position: absolute; inset:0; pointer-events:none; mix-blend-mode: multiply; background: radial-gradient(60% 50% at 50% 20%, rgba(0,0,0,0.0), rgba(0,0,0,0.28)); }
 
-/* HERO */
+  /* crossfade layers (for smooth transitions) */
+  .bg-layer{ position:absolute; inset:0; opacity:0; transition:opacity 820ms cubic-bezier(.2,.9,.22,1); pointer-events:none; }
+  .bg-layer.active{ opacity:1; }
 
-.hero{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 10%;
-  position:relative;
-}
+  /* canvas sits above background layers for particles/effects */
+  #bg-canvas{ position:absolute; inset:0; z-index: -10; pointer-events:none; width:100%; height:100%; display:block; }
 
-.text{
-  max-width:520px;
-}
+  /* ---- page layout ---- */
+  header{ min-height:84vh; display:flex; align-items:center; justify-content:center; padding:48px 7%; position:relative; }
+  .hero{ max-width:1300px; width:100%; display:grid; grid-template-columns: 1fr 480px; gap:36px; align-items:center; }
+  @media (max-width:980px){ .hero{ grid-template-columns:1fr; } }
 
-h1{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:3rem;
-  line-height:1.1;
-  margin-bottom:20px;
-}
+  .left{
+    padding-right:10px;
+  }
 
-p{
-  color:var(--muted);
-  line-height:1.6;
-}
+  h1{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size: clamp(30px, 4.6vw, 44px); line-height:1.02; margin:0 0 16px;
+    letter-spacing:-0.4px;
+  }
 
-.accent{
-  color:var(--accent);
-  transition:color var(--transition);
-}
+  p.lead{ color:var(--muted); font-size:16px; margin:0 0 22px; max-width:58ch; }
 
-/* DOG */
+  .cta-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:18px; }
+  .btn{
+    background:var(--accent); color:#031426; padding:10px 16px; border-radius:12px; border:none; cursor:pointer; font-weight:600; box-shadow:var(--shadow);
+    transition: transform 360ms cubic-bezier(.2,.9,.22,1), box-shadow 360ms;
+  }
+  .btn.secondary{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.06); box-shadow:none; }
+  .btn:hover{ transform:translateY(-6px); }
 
-.dog-container{
-  width:360px;
-  height:360px;
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:transform var(--transition);
-}
+  /* ---- mascot area (right) ---- */
+  .mascot-wrap{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+  .mascot-stage{
+    width:420px; height:420px; border-radius:calc(var(--radius) * 1.2);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.04); padding:18px; box-shadow:var(--shadow);
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:visible;
+    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  }
+  @media (max-width:980px){ .mascot-stage{ width:86vw; height:360px; margin:18px auto 0; } }
 
-.dog{
-  width:100%;
-  height:100%;
-  background:radial-gradient(circle at center, rgba(255,255,255,0.15), transparent 60%);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:120px;
-  animation:idle 4s ease-in-out infinite;
-}
+  /* mascot svg container */
+  .mascot{ width:86%; height:86%; display:block; position:relative; pointer-events:none; }
 
-@keyframes idle{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
-}
+  /* dog absolute for motion */
+  .dog-anim{ position:absolute; width:66%; left:calc(50% - 33%); bottom:10%; transform-origin:center bottom; transition: transform var(--transition), left var(--transition), bottom var(--transition), opacity var(--transition); }
+  .dog-anim.hidden{ opacity:0; transform:translateY(8px) scale(0.98); }
 
-/* BACKGROUND CANVAS */
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:-1;
-}
+  /* modes will set where dog sits and how it animates */
+  .mode-winter .mascot-stage{ background: linear-gradient(180deg,#071829 0%, #071b2b 100%); border-color: rgba(140,200,255,0.08); }
+  .mode-spring .mascot-stage{ background: linear-gradient(180deg,#f7fff6 0%, #ecfef1 100%); border-color: rgba(80,200,120,0.08); }
+  .mode-summer .mascot-stage{ background: linear-gradient(180deg,#fffaf0 0%, #fff0d6 100%); border-color: rgba(255,170,80,0.08); }
+  .mode-rainy .mascot-stage{ background: linear-gradient(180deg,#061026 0%, #0b1a27 100%); border-color: rgba(120,220,240,0.06); }
+  .mode-ai .mascot-stage{ background: linear-gradient(180deg,#010514 0%, #07102a 100%); border-color: rgba(100,180,255,0.08); }
 
-/* MODE BUTTON */
+  /* dog motion keyframes (calm premium) */
+  @keyframes breathe {
+    0%,100%{ transform: translateY(0) scale(1); }
+    50%{ transform: translateY(-6px) scale(1.006); }
+  }
+  @keyframes tail-wag {
+    0%,100%{ transform: rotate(-6deg); }
+    50%{ transform: rotate(10deg); }
+  }
+  @keyframes head-nod {
+    0%,100%{ transform: translateY(0) rotate(0); }
+    50%{ transform: translateY(-6px) rotate(-1.8deg); }
+  }
+  @keyframes run-loop {
+    0%{ transform: translateX(0); }
+    50%{ transform: translateX(24px); }
+    100%{ transform: translateX(0); }
+  }
 
-.mode{
-  position:fixed;
-  top:20px;
-  right:20px;
-  background:rgba(255,255,255,0.08);
-  padding:10px 18px;
-  border-radius:30px;
-  backdrop-filter:blur(12px);
-  cursor:pointer;
-  transition:var(--transition);
-}
+  /* per-mode dog positions + subtle transforms */
+  .mode-winter .dog-anim{ left:62%; bottom:8%; transform:translateY(0) scale(1); animation: breathe 4.8s ease-in-out infinite; }
+  .mode-spring .dog-anim{ left:58%; bottom:10%; animation: breathe 3.6s ease-in-out infinite, head-nod 5.2s ease-in-out infinite; }
+  .mode-summer .dog-anim{ left:20%; bottom:6%; animation: run-loop 2.2s linear infinite; } /* runs across low area */
+  .mode-rainy .dog-anim{ left:62%; bottom:14%; transform:scale(.98); animation: none; }
+  .mode-ai .dog-anim{ left:62%; bottom:18%; animation: breathe 3.2s ease-in-out infinite; filter: drop-shadow(0 12px 36px rgba(40,110,220,0.12)); }
 
-.mode:hover{
-  transform:translateY(-4px);
-}
+  /* accessory animations (umbrella, scarf, glasses etc.) via group classes toggled by JS */
+  .scarf{ transform-origin: 40% 60%; animation: tail-wag 1.2s ease-in-out infinite; }
+  .petals{ opacity:0.96; filter: blur(0.2px); }
+  .umbrella{ transform-origin:center bottom; }
+  .glasses{ filter: drop-shadow(0 6px 16px rgba(60,160,255,0.12)); }
 
+  /* subtle UI top-right mode selector */
+  .mode-control{ position:fixed; right:22px; top:22px; display:flex; gap:8px; z-index:1200; align-items:center; }
+  .mode-toggle{ background:var(--card-bg); border:1px solid rgba(255,255,255,0.04); padding:10px 12px; border-radius:999px; cursor:pointer; backdrop-filter: blur(8px); color:var(--muted); font-weight:600; font-size:13px; transition: transform 250ms; }
+  .mode-toggle:hover{ transform:translateY(-4px); }
+  .mode-panel{ position:absolute; right:0; top:48px; background:var(--glass); border-radius:12px; padding:8px; display:none; box-shadow:0 12px 30px rgba(2,6,23,0.5); }
+  .mode-panel.open{ display:block; }
+  .mode-option{ padding:8px 12px; border-radius:8px; cursor:pointer; color:var(--text); font-size:14px; }
+  .mode-option:hover{ background:rgba(255,255,255,0.02); transform:translateX(6px); }
+
+  /* reduced-motion: simplify large animations */
+  @media (prefers-reduced-motion: reduce){
+    .dog-anim, .mascot-stage, .bg-layer, #bg-canvas{ animation:none !important; transition:none !important; transform:none !important; }
+  }
+
+  /* footer / page body */
+  main{ padding:48px 8%; color:var(--muted); }
+  footer{ padding:22px 8%; color:var(--muted); text-align:center; }
 </style>
 </head>
-
 <body>
+  <div id="app" class="app mode-winter"> <!-- class will change to mode-XXX -->
+    <!-- cinematic background root & layers -->
+    <div id="bgRoot" class="bg-root" aria-hidden>
+      <!-- layered gradients for dramatic crossfade -->
+      <div id="bgWinter" class="bg-layer" style="background:linear-gradient(180deg,#071829 0%, #071b2b 100%);"></div>
+      <div id="bgSpring" class="bg-layer" style="background:linear-gradient(160deg,#f7fff6 0%, #eafbf0 100%);"></div>
+      <div id="bgSummer" class="bg-layer" style="background:linear-gradient(160deg,#fff7e6 0%, #fff0d4 100%);"></div>
+      <div id="bgRainy" class="bg-layer" style="background:linear-gradient(160deg,#06121a 0%, #0a1824 100%);"></div>
+      <div id="bgAI" class="bg-layer" style="background:linear-gradient(160deg,#010614 0%, #07102a 100%);"></div>
 
-<canvas id="bg"></canvas>
+      <!-- optional soft vignette -->
+      <div class="bg-vignette"></div>
 
-<div class="mode" onclick="cycleMode()">Season Mode</div>
+      <!-- canvas for particle animations -->
+      <canvas id="bg-canvas"></canvas>
+    </div>
 
-<section class="hero">
-  <div class="text">
-    <h1>
-      Designing <span class="accent">Intelligent</span> &
-      Human-Centered Experiences
-    </h1>
-    <p>
-      I merge AI, UI/UX, creativity, and nature-inspired thinking
-      to build systems that feel alive.
-    </p>
+    <!-- top-right control -->
+    <div class="mode-control" aria-hidden>
+      <div class="mode-toggle" id="modeBtn" tabindex="0" aria-haspopup="true" aria-expanded="false">Mode ▾</div>
+      <div id="modePanel" class="mode-panel" role="menu" aria-hidden="true">
+        <div class="mode-option" data-mode="auto">🌍 Auto (season)</div>
+        <div class="mode-option" data-mode="winter">❄ Winter</div>
+        <div class="mode-option" data-mode="spring">🌸 Spring</div>
+        <div class="mode-option" data-mode="summer">☀ Summer</div>
+        <div class="mode-option" data-mode="rainy">🌧 Rainy</div>
+        <div class="mode-option" data-mode="ai">🤖 AI</div>
+      </div>
+    </div>
+
+    <!-- header hero -->
+    <header>
+      <div class="hero" role="banner">
+        <div class="left">
+          <h1 id="heroTitle">Designing intelligent, human-first products — with purpose & craft.</h1>
+          <p class="lead" id="heroLead">I combine AI, UI/UX, photography and a love of nature to build calm, delightful experiences. Explore the site modes — the environment, lighting and the mascot adapt to each mode to show design thinking in motion.</p>
+
+          <div class="cta-row">
+            <button class="btn" id="enterBtn">See work</button>
+            <button class="btn secondary" id="caseBtn">UX Case Study</button>
+          </div>
+        </div>
+
+        <div class="mascot-wrap">
+          <div class="mascot-stage" id="mascotStage">
+            <!-- large SVG mascot (stylized soft-flat dog). Groups per mode visible via JS -->
+            <svg class="mascot" viewBox="0 0 860 720" preserveAspectRatio="xMidYMid meet" aria-hidden="false" role="img" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="drop" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="18" stdDeviation="30" flood-color="#000" flood-opacity="0.25"/></filter>
+                <linearGradient id="furGrad" x1="0" x2="1"><stop offset="0" stop-color="#fff7f0"/><stop offset="1" stop-color="#f4e6da"/></linearGradient>
+                <linearGradient id="innerGrad" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f8f4ef"/></linearGradient>
+                <linearGradient id="glassGrad" x1="0" x2="1"><stop offset="0" stop-color="#6fbff6"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+              </defs>
+
+              <!-- background subtle circle -->
+              <g id="mascotBackground" opacity="0.14"><circle cx="430" cy="320" r="260" fill="url(#innerGrad)"/></g>
+
+              <!-- BASE DOG (shared shapes) -->
+              <g id="dogBase" filter="url(#drop)" transform="translate(100,110)">
+                <!-- body -->
+                <ellipse cx="330" cy="320" rx="250" ry="150" fill="url(#furGrad)"/>
+                <!-- head -->
+                <g id="head" transform="translate(160,80)">
+                  <ellipse cx="120" cy="120" rx="98" ry="90" fill="#fff7f0"/>
+                  <!-- ear -->
+                  <path id="ear-left" d="M46 46 q-32 -20 -48 6 q28 16 44 22z" fill="#e9d7c9" transform="translate(-10,0)"/>
+                  <path id="ear-right" d="M210 60 q28 -14 40 6 q-20 12 -36 18z" fill="#e9d7c9" transform="translate(6,4)"/>
+                  <!-- face shading -->
+                  <ellipse cx="120" cy="140" rx="56" ry="40" fill="rgba(0,0,0,0.03)"/>
+                  <!-- eyes -->
+                  <g id="eyes">
+                    <circle cx="96" cy="120" r="8" fill="#3a2a24"/>
+                    <circle cx="144" cy="120" r="8" fill="#3a2a24"/>
+                  </g>
+                  <!-- snout & nose -->
+                  <path d="M110 148 q10 10 28 0" stroke="#3a2a24" stroke-width="3" stroke-linecap="round" fill="none"/>
+                  <circle cx="126" cy="135" r="6" fill="#372a24"/>
+                </g>
+
+                <!-- tail (animatable group) -->
+                <g id="tail" transform="translate(490,240)">
+                  <path d="M0 0 q40 -30 90 -18 q6 22 -12 36 q-28 18 -78 -18z" fill="#f4e2d6" />
+                </g>
+
+                <!-- legs -->
+                <g id="legs" transform="translate(120,360)">
+                  <ellipse cx="70" cy="70" rx="46" ry="34" fill="#f4e2d6"/>
+                  <ellipse cx="300" cy="70" rx="46" ry="34" fill="#f4e2d6"/>
+                </g>
+
+                <!-- accessory groups for each mode (hidden/shown by JS) -->
+
+                <!-- winter: scarf + breath -->
+                <g id="scarfGroup" opacity="0">
+                  <path d="M140 220 q80 36 140 6 q6 -30 -44 -34 q-86 4 -96 28z" fill="#9ed8ff"/>
+                  <rect x="236" y="238" width="30" height="56" rx="8" fill="#7ec9ff" transform="rotate(-18 251 266)"/>
+                  <!-- breath puffs (animated circles) -->
+                  <g id="breath" transform="translate(140,120)">
+                    <circle cx="40" cy="40" r="6" fill="rgba(255,255,255,0.7)" opacity="0.0"/>
+                    <circle cx="58" cy="36" r="8" fill="rgba(255,255,255,0.5)" opacity="0.0"/>
+                    <circle cx="78" cy="34" r="10" fill="rgba(255,255,255,0.36)" opacity="0.0"/>
+                  </g>
+                </g>
+
+                <!-- spring: petals -->
+                <g id="petalsGroup" opacity="0">
+                  <g class="petals" transform="translate(20,20)">
+                    <ellipse cx="40" cy="40" rx="10" ry="18" fill="#ffb6c4" transform="rotate(12)"/>
+                    <ellipse cx="118" cy="12" rx="8" ry="14" fill="#ffd9b6" transform="rotate(-18)"/>
+                    <ellipse cx="210" cy="20" rx="9" ry="16" fill="#d6ffd7" transform="rotate(6)"/>
+                  </g>
+                </g>
+
+                <!-- summer: movement markers (sunflare) -->
+                <g id="sunflareGroup" opacity="0">
+                  <circle cx="480" cy="40" r="36" fill="rgba(255,220,120,0.12)"/>
+                  <circle cx="500" cy="60" r="8" fill="rgba(255,220,120,0.06)"/>
+                </g>
+
+                <!-- rainy: umbrella -->
+                <g id="umbrellaGroup" opacity="0" transform="translate(400, -30)">
+                  <path d="M-60 20 q60 -80 140 0 z" fill="#6fd8dd" stroke="#4fc7cc" stroke-width="2"/>
+                  <rect x="-2" y="20" width="6" height="90" rx="3" fill="#2b2b2b"/>
+                </g>
+
+                <!-- ai: glasses + node -->
+                <g id="glassesGroup" opacity="0">
+                  <rect x="78" y="64" rx="10" ry="10" width="48" height="22" fill="#041827"/>
+                  <rect x="122" y="64" rx="10" ry="10" width="48" height="22" fill="#041827" transform="translate(10,0)"/>
+                  <g id="aiNodes" transform="translate(360,80)" opacity="0.0">
+                    <circle cx="0" cy="0" r="4" fill="#6bf"/>
+                    <circle cx="40" cy="20" r="4" fill="#6bf"/>
+                    <line x1="0" y1="0" x2="40" y2="20" stroke="#6bf" stroke-width="1.2" stroke-linecap="round"/>
+                  </g>
+                </g>
+
+              </g>
+            </svg>
+
+            <!-- dog grouping which will be moved/animated by JS -->
+            <div id="dogAnim" class="dog-anim" aria-hidden>
+              <!-- To keep logic simple, dog visuals live inside SVG above; dog-anim acts as transform wrapper -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section style="max-width:980px; margin: 0 auto 40px; color:var(--muted);">
+        <h3 style="color:var(--accent); margin-top:0;">Why modes matter</h3>
+        <p>Each mode intentionally adjusts lighting, mood, micro-interaction rhythm and the mascot behavior to demonstrate how environment influences UX. This site is both a portfolio and a living case study in motion-first design.</p>
+      </section>
+    </main>
+
+    <footer>© 2026 Your Name • Creative Technologist • UI/UX • AI</footer>
   </div>
-
-  <div class="dog-container">
-    <div id="dog" class="dog">🐶</div>
-  </div>
-</section>
 
 <script>
+/* ---------------------------
+   Premium Seasonal Engine
+   - auto season detection (NH)
+   - manual override + localStorage
+   - crossfade background layers
+   - canvas animation modes (snow/petals/sun/rain/ai net)
+   - dog accessory toggles & position/animation tuning
+   --------------------------- */
 
-/* SEASONS */
+(() => {
+  const APP = document.getElementById('app');
+  const bgRoot = document.getElementById('bgRoot');
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  const modeBtn = document.getElementById('modeBtn');
+  const modePanel = document.getElementById('modePanel');
+  const options = Array.from(document.querySelectorAll('.mode-option'));
+  const bgLayers = {
+    winter: document.getElementById('bgWinter'),
+    spring: document.getElementById('bgSpring'),
+    summer: document.getElementById('bgSummer'),
+    rainy: document.getElementById('bgRainy'),
+    ai: document.getElementById('bgAI')
+  };
+  const scarfGroup = document.getElementById('scarfGroup');
+  const petalsGroup = document.getElementById('petalsGroup');
+  const umbrellaGroup = document.getElementById('umbrellaGroup');
+  const glassesGroup = document.getElementById('glassesGroup');
+  const breathGroup = document.getElementById('breath');
+  const aiNodes = document.getElementById('aiNodes');
+  const sunflare = document.getElementById('sunflareGroup');
+  const dogAnim = document.getElementById('dogAnim');
+  const dogStage = document.getElementById('mascotStage');
 
-const modes = ["winter","spring","summer","rainy","ai"];
-let index = 0;
+  /* state */
+  const state = {
+    mode: null,       // 'auto' or specific
+    season: null,     // active season string
+    manual: localStorage.getItem('site_manual') === 'true',
+    storedMode: localStorage.getItem('site_mode') || 'auto'
+  };
 
-function cycleMode(){
-  index = (index + 1) % modes.length;
-  applyMode(modes[index]);
-}
-
-function autoSeason(){
-  const month = new Date().getMonth()+1;
-  if(month<=2 || month==12) return "winter";
-  if(month>=3 && month<=5) return "spring";
-  if(month>=6 && month<=8) return "summer";
-  return "rainy";
-}
-
-function applyMode(mode){
-
-  const root = document.documentElement;
-  const dog = document.getElementById("dog");
-
-  switch(mode){
-
-    case "winter":
-      root.style.setProperty("--bg1","#0f172a");
-      root.style.setProperty("--bg2","#1e293b");
-      root.style.setProperty("--accent","#7dd3fc");
-      dog.textContent="🧣🐶";
-      break;
-
-    case "spring":
-      root.style.setProperty("--bg1","#f0fdf4");
-      root.style.setProperty("--bg2","#dcfce7");
-      root.style.setProperty("--accent","#22c55e");
-      root.style.setProperty("--text","#111");
-      root.style.setProperty("--muted","#555");
-      dog.textContent="🌸🐶";
-      break;
-
-    case "summer":
-      root.style.setProperty("--bg1","#fef3c7");
-      root.style.setProperty("--bg2","#fde68a");
-      root.style.setProperty("--accent","#f59e0b");
-      root.style.setProperty("--text","#111");
-      root.style.setProperty("--muted","#444");
-      dog.textContent="☀🐶";
-      break;
-
-    case "rainy":
-      root.style.setProperty("--bg1","#1e293b");
-      root.style.setProperty("--bg2","#0f172a");
-      root.style.setProperty("--accent","#38bdf8");
-      dog.textContent="☔🐶";
-      break;
-
-    case "ai":
-      root.style.setProperty("--bg1","#020617");
-      root.style.setProperty("--bg2","#0f172a");
-      root.style.setProperty("--accent","#3b82f6");
-      dog.textContent="🤖🐶";
-      break;
+  /* season detection (northern hemisphere) */
+  function seasonFromDate(d = new Date()){
+    const m = d.getMonth() + 1;
+    if(m === 12 || m <= 2) return 'winter';
+    if(m >= 3 && m <= 5) return 'spring';
+    if(m >= 6 && m <= 8) return 'summer';
+    return 'rainy';
   }
-}
 
-/* AUTO APPLY */
-applyMode(autoSeason());
+  /* apply UI mode (auto or explicit) */
+  function applyMode(mode){
+    if(mode === 'auto'){ mode = 'auto'; state.mode = 'auto'; localStorage.setItem('site_mode','auto'); }
+    else { state.mode = mode; localStorage.setItem('site_mode', mode); }
 
-/* PREMIUM PARTICLE BACKGROUND */
+    // compute season to activate
+    const season = (state.mode === 'auto') ? seasonFromDate() : state.mode;
+    state.season = season;
 
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
+    // root class
+    APP.classList.remove('mode-winter','mode-spring','mode-summer','mode-rainy','mode-ai');
+    APP.classList.add('mode-' + season);
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    // crossfade bg layers
+    Object.keys(bgLayers).forEach(k => {
+      if(k === season) bgLayers[k].classList.add('active');
+      else bgLayers[k].classList.remove('active');
+    });
 
-let particles = [];
+    // toggle accessory groups
+    scarfGroup.style.opacity = (season === 'winter') ? 1 : 0;
+    petalsGroup.style.opacity = (season === 'spring') ? 1 : 0;
+    umbrellaGroup.style.opacity = (season === 'rainy') ? 1 : 0;
+    glassesGroup.style.opacity = (season === 'ai') ? 1 : 0;
+    aiNodes.style.opacity = (season === 'ai') ? 1 : 0;
+    sunflare.style.opacity = (season === 'summer') ? 1 : 0;
 
-class Particle{
-  constructor(){
-    this.x=Math.random()*canvas.width;
-    this.y=Math.random()*canvas.height;
-    this.size=Math.random()*2;
-    this.speedY=Math.random()*0.4;
+    // animate breath for winter
+    if(season === 'winter'){ animateBreath(true); } else animateBreath(false);
+
+    // position dog by season (balanced positions)
+    setDogPositionForSeason(season);
+
+    // start background animation for the season
+    startBgAnimation(season);
+
+    // reflect mode panel label
+    updateModeBtnLabel(state.mode);
   }
-  update(){
-    this.y+=this.speedY;
-    if(this.y>canvas.height)this.y=0;
+
+  function updateModeBtnLabel(mode){
+    // show label
+    modeBtn.textContent = (mode === 'auto') ? 'Mode ▾ (Auto)' : `Mode ▾ (${capitalize(mode)})`;
   }
-  draw(){
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,0.2)";
-    ctx.fill();
+
+  function capitalize(s){ if(!s) return ''; return s[0].toUpperCase()+s.slice(1); }
+
+  /* dog position and animation tuning */
+  function setDogPositionForSeason(season){
+    // desktop positions (left/right offset) — change for smaller screens via media queries in CSS
+    const base = dogAnim.style;
+    // ensure dog visible
+    document.querySelectorAll('.dog-anim').forEach(el => el.classList.remove('hidden'));
+
+    switch(season){
+      case 'winter':
+        base.left = '62%';
+        base.bottom = '8%';
+        dogStage.style.transform = 'scale(1) translateY(0)';
+        break;
+      case 'spring':
+        base.left = '58%';
+        base.bottom = '10%';
+        dogStage.style.transform = 'scale(1.02) translateY(-4px)';
+        break;
+      case 'summer':
+        base.left = '20%';
+        base.bottom = '6%';
+        dogStage.style.transform = 'scale(1.02) translateY(0)';
+        break;
+      case 'rainy':
+        base.left = '62%';
+        base.bottom = '14%';
+        dogStage.style.transform = 'scale(0.98) translateY(6px)';
+        break;
+      case 'ai':
+        base.left = '62%';
+        base.bottom = '18%';
+        dogStage.style.transform = 'scale(1.03) translateY(-6px)';
+        break;
+      default:
+        base.left='62%'; base.bottom='10%';
+    }
   }
-}
 
-function init(){
-  particles=[];
-  for(let i=0;i<100;i++){
-    particles.push(new Particle());
+  /* breath puff animation (winter) */
+  function animateBreath(enable){
+    if(!breathGroup) return;
+    const circles = Array.from(breathGroup.querySelectorAll('circle'));
+    if(enable){
+      // animate via JS timeline
+      circles.forEach((c, i) => {
+        c.animate([
+          { opacity: 0, transform: 'translateY(0) scale(0.6)' },
+          { opacity: 0.9 - i*0.25, transform: 'translateY(-14px) scale(1)' },
+          { opacity: 0, transform: 'translateY(-30px) scale(1.4)' }
+        ], { duration: 1600 + i*180, iterations: Infinity, delay: i*200, easing:'cubic-bezier(.2,.9,.2,1)' });
+      });
+    } else {
+      circles.forEach(c => c.getAnimations().forEach(a => a.cancel()));
+      circles.forEach(c => c.style.opacity = 0);
+    }
   }
-}
 
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    p.update();
-    p.draw();
-  });
-  requestAnimationFrame(animate);
-}
+  /* ----------- canvas background animations ----------- */
+  let w = canvas.width = innerWidth;
+  let h = canvas.height = innerHeight;
+  window.addEventListener('resize', () => { w = canvas.width = innerWidth; h = canvas.height = innerHeight; });
 
-init();
-animate();
+  let animId = null;
+  let particles = [];
 
+  function stopAnim(){ if(animId) cancelAnimationFrame(animId); particles = []; }
+
+  /* snow */
+  function startSnow(){
+    stopAnim();
+    particles = Array.from({length:120}).map(()=>({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: 0.8 + Math.random()*2.6,
+      vy: 0.6 + Math.random()*1.1,
+      vx: -0.3 + Math.random()*0.6,
+      a: 0.6 + Math.random()*0.35
+    }));
+    function loop(){
+      ctx.clearRect(0,0,w,h);
+      particles.forEach(p=>{
+        p.x += p.vx; p.y += p.vy;
+        if(p.y > h+10){ p.y = -10; p.x = Math.random()*w; }
+        ctx.globalAlpha = p.a;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      animId = requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* petals */
+  function startPetals(){
+    stopAnim();
+    particles = Array.from({length:80}).map(()=>({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: 10 + Math.random()*10,
+      vy: 0.6 + Math.random()*0.8,
+      angle: Math.random()*Math.PI*2,
+      vx: -0.6 + Math.random()*1.2,
+      hue: 320 + Math.random()*60
+    }));
+    function loop(){
+      ctx.clearRect(0,0,w,h);
+      particles.forEach(p=>{
+        p.y += p.vy; p.x += p.vx + Math.sin(p.angle)*0.6; p.angle += 0.02;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(Math.sin(p.angle));
+        ctx.fillStyle = `hsl(${p.hue},70%,70%)`; ctx.beginPath(); ctx.ellipse(0,0,p.r*0.6,p.r,0,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+        if(p.y > h+40){ p.y = -40; p.x = Math.random()*w; }
+      });
+      animId = requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* warm shimmer (summer) */
+  function startSun(){
+    stopAnim();
+    particles = Array.from({length:60}).map(()=>({
+      x: Math.random()*w,
+      y: Math.random()*h*0.6,
+      r: 30 + Math.random()*80,
+      vy: 0.02 + Math.random()*0.16,
+      a: Math.random()*0.22 + 0.05
+    }));
+    function loop(){
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle = 'rgba(255,244,220,0.04)'; ctx.fillRect(0,0,w,h);
+      particles.forEach(p=>{
+        p.y += p.vy; if(p.y > h){ p.y = -p.r; p.x = Math.random()*w; }
+        const grad = ctx.createRadialGradient(p.x,p.y,p.r*0.1,p.x,p.y,p.r);
+        grad.addColorStop(0, `rgba(255,220,120,${p.a})`); grad.addColorStop(1, 'rgba(255,220,120,0)');
+        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+      animId = requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* rain */
+  function startRain(){
+    stopAnim();
+    particles = Array.from({length:220}).map(()=>({
+      x: Math.random()*w, y: Math.random()*h, l: 10 + Math.random()*18, vy: 4 + Math.random()*6, alpha: 0.12 + Math.random()*0.28, skew: -1.0 - Math.random()*0.6
+    }));
+    function loop(){
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle = 'rgba(6,12,20,0.04)'; ctx.fillRect(0,0,w,h);
+      particles.forEach(p=>{
+        p.x += p.skew; p.y += p.vy;
+        if(p.y > h+20){ p.y = -20; p.x = Math.random()*w; }
+        ctx.beginPath(); ctx.strokeStyle = `rgba(190,230,240,${p.alpha})`; ctx.lineWidth=1.2;
+        ctx.moveTo(p.x,p.y); ctx.lineTo(p.x - p.skew*2, p.y - p.l); ctx.stroke();
+      });
+      animId = requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  /* AI net */
+  function startAI(){
+    stopAnim();
+    const cols = Math.max(8, Math.floor(w/120));
+    const rows = Math.max(5, Math.floor(h/140));
+    const nodes = [];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        nodes.push({
+          x:(c+0.5)*(w/cols)+(Math.random()-0.5)*40,
+          y:(r+0.5)*(h/rows)+(Math.random()-0.5)*30,
+          r:2 + Math.random()*3, phase: Math.random()*Math.PI*2
+        });
+      }
+    }
+    function loop(t){
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle='rgba(2,6,14,0.06)'; ctx.fillRect(0,0,w,h);
+      ctx.globalCompositeOperation='lighter';
+      for(let i=0;i<nodes.length;i++){
+        const a = nodes[i];
+        for(let j=i+1;j<Math.min(i+10,nodes.length);j++){
+          const b = nodes[j];
+          const dx=a.x-b.x, dy=a.y-b.y, dist=Math.hypot(dx,dy);
+          if(dist < 180){
+            ctx.strokeStyle = `rgba(90,170,255,${1-dist/180})`; ctx.lineWidth=0.9; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        }
+      }
+      nodes.forEach(n=>{
+        const p = 0.9 + Math.sin(t/600 + n.phase)*0.2;
+        const glow = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,18);
+        glow.addColorStop(0, `rgba(120,190,255,${0.12*p})`); glow.addColorStop(1, 'rgba(120,190,255,0)');
+        ctx.fillStyle = glow; ctx.fillRect(n.x-18,n.y-18,36,36);
+        ctx.beginPath(); ctx.fillStyle = `rgba(150,210,255,${0.9*p})`; ctx.arc(n.x,n.y,n.r*p+0.6,0,Math.PI*2); ctx.fill();
+      });
+      ctx.globalCompositeOperation='source-over';
+      animId = requestAnimationFrame(loop);
+    }
+    loop(0);
+  }
+
+  function startBgAnimation(season){
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) { stopAnim(); ctx.clearRect(0,0,w,h); return; }
+    switch(season){
+      case 'winter': startSnow(); break;
+      case 'spring': startPetals(); break;
+      case 'summer': startSun(); break;
+      case 'rainy': startRain(); break;
+      case 'ai': startAI(); break;
+      default: startPetals();
+    }
+  }
+
+  /* ----------------- mode controls ----------------- */
+  function initControls(){
+    // mode button toggle
+    modeBtn.addEventListener('click', e => {
+      const open = modePanel.classList.toggle('open');
+      modeBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      modePanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+    });
+
+    // options
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        const mode = opt.dataset.mode;
+        if(mode === 'auto'){ state.mode = 'auto'; localStorage.setItem('site_mode','auto'); state.manual=false; localStorage.setItem('site_manual','false'); }
+        else { state.mode = mode; localStorage.setItem('site_mode',mode); state.manual=true; localStorage.setItem('site_manual','true'); }
+        applyMode(state.mode);
+        modePanel.classList.remove('open');
+        modeBtn.setAttribute('aria-expanded','false');
+      });
+    });
+
+    // click outside to close
+    document.addEventListener('click', e => {
+      if(!modePanel.contains(e.target) && !modeBtn.contains(e.target)){
+        modePanel.classList.remove('open'); modeBtn.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
+  /* initial load: decide mode */
+  function initial(){
+    const saved = localStorage.getItem('site_mode') || 'auto';
+    const manualSaved = localStorage.getItem('site_manual') === 'true';
+    state.manual = manualSaved;
+    state.mode = saved;
+    if(saved === 'auto'){ state.mode = 'auto'; applyMode('auto'); }
+    else { applyMode(saved); }
+    initControls();
+
+    // re-evaluate auto every minute to gracefully change season when a visitor crosses seasonal boundary
+    setInterval(() => {
+      const stored = localStorage.getItem('site_mode') || 'auto';
+      const manual = localStorage.getItem('site_manual') === 'true';
+      if(!manual && stored === 'auto'){ applyMode('auto'); }
+    }, 60*1000);
+  }
+
+  /* small accessibility & reduced motion behaviors handled already */
+
+  /* kick off */
+  initial();
+
+})();
 </script>
-
 </body>
 </html>
