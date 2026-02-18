@@ -1,112 +1,378 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Interactive Portfolio</title>
-    <meta charset="UTF-8">
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #0f0f1a;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Interactive Portfolio</title>
 
-        h1 {
-            position: absolute;
-            top: 40%;
-            width: 100%;
-            text-align: center;
-            font-size: 3rem;
-            z-index: 10;
-        }
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+scroll-behavior:smooth;
+font-family: 'Segoe UI', sans-serif;
+}
 
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-    </style>
+body{
+background:#0f0f1a;
+color:white;
+overflow-x:hidden;
+transition:0.4s;
+}
+
+.light-mode{
+background:#f4f4f4;
+color:#111;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* NAVBAR */
+nav{
+position:fixed;
+top:-80px;
+width:100%;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(10px);
+transition:0.4s;
+z-index:1000;
+}
+
+nav.show{
+top:0;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+margin:0 10px;
+cursor:pointer;
+}
+
+/* HERO */
+header{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+
+h1{
+font-size:3.5rem;
+}
+
+#typing{
+color:cyan;
+margin-top:10px;
+font-size:1.2rem;
+height:30px;
+}
+
+/* BUTTONS */
+.btn{
+margin-top:20px;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:cyan;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:scale(1.1);
+}
+
+/* SECTIONS */
+section{
+min-height:100vh;
+padding:100px 10%;
+opacity:0;
+transform:translateY(50px);
+transition:0.8s;
+}
+
+section.show{
+opacity:1;
+transform:translateY(0);
+}
+
+h2{
+margin-bottom:20px;
+color:cyan;
+}
+
+/* CARDS */
+.card-container{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+}
+
+.card{
+width:250px;
+height:180px;
+perspective:1000px;
+}
+
+.inner{
+position:relative;
+width:100%;
+height:100%;
+transition:transform 0.8s;
+transform-style:preserve-3d;
+}
+
+.card:hover .inner{
+transform:rotateY(180deg);
+}
+
+.front,.back{
+position:absolute;
+width:100%;
+height:100%;
+backface-visibility:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+border-radius:15px;
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+}
+
+.back{
+transform:rotateY(180deg);
+background:rgba(0,255,255,0.3);
+}
+
+/* RESEARCH SCROLL */
+.scroll-box{
+max-height:250px;
+overflow-y:auto;
+padding:15px;
+background:rgba(255,255,255,0.1);
+border-radius:15px;
+}
+
+.scroll-box ul{
+list-style:none;
+}
+
+.scroll-box li{
+margin-bottom:10px;
+}
+
+/* FOOTER */
+footer{
+text-align:center;
+padding:20px;
+opacity:0.6;
+}
+</style>
 </head>
-<body>
 
-<h1>Hello, I'm Your Name</h1>
+<body>
 
 <canvas id="bg"></canvas>
 
+<nav id="navbar">
+<div>🚀 My Portfolio</div>
+<div>
+<a onclick="scrollToSection('about')">About</a>
+<a onclick="scrollToSection('experience')">Experience</a>
+<a onclick="scrollToSection('projects')">Projects</a>
+<a onclick="scrollToSection('research')">Research</a>
+<a onclick="scrollToSection('contact')">Contact</a>
+<button class="btn" onclick="toggleMode()">Toggle Mode</button>
+</div>
+</nav>
+
+<header>
+<h1>Hey, I'm Your Name 👋</h1>
+<div id="typing"></div>
+<button class="btn" onclick="scrollToSection('about')">Enter My Universe ✨</button>
+</header>
+
+<section id="about">
+<h2>About Me</h2>
+<p>I build things, break things, and build them better. Passionate about tech, research, and innovation.</p>
+</section>
+
+<section id="experience">
+<h2>Work Experience</h2>
+<p>Add internships, leadership roles, and achievements here.</p>
+</section>
+
+<section id="projects">
+<h2>Projects</h2>
+<div class="card-container">
+<div class="card">
+<div class="inner">
+<div class="front">Project 1</div>
+<div class="back">Description + GitHub link</div>
+</div>
+</div>
+
+<div class="card">
+<div class="inner">
+<div class="front">Project 2</div>
+<div class="back">Description + Demo link</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="research">
+<h2>Research Papers Read 📚</h2>
+<div class="scroll-box">
+<ul>
+<li>• Attention Is All You Need</li>
+<li>• GANs - Goodfellow</li>
+<li>• ResNet Paper</li>
+<li>• BERT: Pre-training of Deep Bidirectional Transformers</li>
+<li>• Diffusion Models</li>
+<li>• AlphaGo Paper</li>
+<li>• GPT Architecture Paper</li>
+<li>• Vision Transformers</li>
+<li>• Neural Style Transfer</li>
+<li>• Add as many as you like...</li>
+</ul>
+</div>
+</section>
+
+<section id="contact">
+<h2>Contact</h2>
+<p>Email: your@email.com</p>
+<p>GitHub: github.com/yourusername</p>
+<p>LinkedIn: linkedin.com/in/yourprofile</p>
+</section>
+
+<footer>
+© 2026 Your Name — Built with chaos & creativity 😎
+</footer>
+
 <script>
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+/* Smooth Scroll */
+function scrollToSection(id){
+document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
 
-let particlesArray = [];
-let mouse = { x: null, y: null };
-
-window.addEventListener("mousemove", function(event) {
-    mouse.x = event.x;
-    mouse.y = event.y;
+/* Navbar reveal */
+window.addEventListener("scroll",function(){
+if(window.scrollY>200){
+document.getElementById("navbar").classList.add("show");
+}
 });
 
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = Math.random() * 2 - 1;
-        this.speedY = Math.random() * 2 - 1;
-    }
+/* Typing effect */
+const textArray=["Developer 💻","Research Enthusiast 🧠","Creative Thinker 🎨","Problem Solver 🚀"];
+let i=0,j=0,currentText="",isDeleting=false;
+function type(){
+currentText=textArray[i];
+document.getElementById("typing").textContent=currentText.substring(0,j);
+if(!isDeleting && j<currentText.length){
+j++;
+setTimeout(type,100);
+}else if(isDeleting && j>0){
+j--;
+setTimeout(type,50);
+}else{
+isDeleting=!isDeleting;
+if(!isDeleting){i=(i+1)%textArray.length;}
+setTimeout(type,1000);
+}
+}
+type();
 
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+/* Reveal sections */
+const sections=document.querySelectorAll("section");
+window.addEventListener("scroll",()=>{
+sections.forEach(sec=>{
+const pos=sec.getBoundingClientRect().top;
+if(pos<window.innerHeight-100){
+sec.classList.add("show");
+}
+});
+});
 
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 100) {
-            this.x -= dx / 10;
-            this.y -= dy / 10;
-        }
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = "#00ffff";
-        ctx.fill();
-    }
+/* Dark mode */
+function toggleMode(){
+document.body.classList.toggle("light-mode");
 }
 
-function init() {
-    particlesArray = [];
-    for (let i = 0; i < 150; i++) {
-        particlesArray.push(new Particle());
-    }
+/* Particle Background */
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let particles=[];
+
+class Particle{
+constructor(){
+this.x=Math.random()*canvas.width;
+this.y=Math.random()*canvas.height;
+this.size=Math.random()*3+1;
+this.speedX=Math.random()*1-0.5;
+this.speedY=Math.random()*1-0.5;
+}
+update(){
+this.x+=this.speedX;
+this.y+=this.speedY;
+if(this.x<0||this.x>canvas.width)this.speedX*=-1;
+if(this.y<0||this.y>canvas.height)this.speedY*=-1;
+}
+draw(){
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+ctx.fillStyle="cyan";
+ctx.fill();
+}
 }
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particlesArray.forEach(particle => {
-        particle.update();
-        particle.draw();
-    });
-    requestAnimationFrame(animate);
+function init(){
+particles=[];
+for(let i=0;i<120;i++){
+particles.push(new Particle());
+}
 }
 
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{
+p.update();
+p.draw();
+});
+requestAnimationFrame(animate);
+}
 init();
 animate();
 
-window.addEventListener("resize", function() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    init();
+window.addEventListener("resize",()=>{
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+init();
 });
+
+/* Easter Egg */
+document.addEventListener("keydown",function(e){
+if(e.key==="*"){
+alert("🎉 You found the secret star mode!");
+}
+});
+
 </script>
 
 </body>
