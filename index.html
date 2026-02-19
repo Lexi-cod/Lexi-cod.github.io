@@ -1,677 +1,789 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Your Name — Creative Technologist</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lexi Nalagandla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,600&family=DM+Mono:wght@300;400;500&family=Nunito:wght@400;600;700;800;900;1000&family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* ---- base tokens ---- */
-  :root{
-    --bg-anim-opacity:1;
-    --text:#eaf0f6;
-    --muted:rgba(234,240,246,0.8);
-    --accent:#6fbff6;
-    --card-bg: rgba(255,255,255,0.03);
-    --glass: rgba(255,255,255,0.04);
-    --radius:14px;
-    --transition:700ms cubic-bezier(.2,.9,.22,1);
-    --shadow: 0 18px 40px rgba(2,6,23,0.45);
-    --reduced-motion: no-preference;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+:root{
+  --t-bg:#080b10;--t-surface:#0e1219;--t-card:#131820;--t-border:#1e2530;
+  --t-green:#00e5a0;--t-blue:#3b9eff;--t-text:#dde4ef;--t-muted:#5a6478;--t-faint:#1a2030;
+  --f-bg:#fffbf5;--f-coral:#ff5c5c;--f-yellow:#ffd166;--f-mint:#06d6a0;
+  --f-blue:#118ab2;--f-purple:#c77dff;--f-pink:#ff85a1;--f-text:#1a1a2e;--f-muted:#8e8e9a;
+}
+body{min-height:100vh;overflow-x:hidden;cursor:none;}
 
-  @media (prefers-reduced-motion: reduce){
-    :root{ --reduced-motion: reduce; }
-  }
+/* CURSOR */
+.cursor-dot{width:8px;height:8px;background:var(--t-green);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:background 0.4s;}
+.cursor-ring{width:36px;height:36px;border:1.5px solid var(--t-green);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.18s ease,opacity 0.18s,border-color 0.4s;opacity:0.5;}
+body.fun-mode .cursor-dot{background:var(--f-coral);}
+body.fun-mode .cursor-ring{border-color:var(--f-coral);}
 
-  html,body{height:100%;margin:0;background:#071022;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
-  .app{min-height:100vh;display:flex;flex-direction:column;}
+/* SWITCHER */
+.switcher{position:fixed;top:20px;right:20px;z-index:9000;display:flex;border-radius:50px;overflow:hidden;border:1.5px solid rgba(255,255,255,0.12);backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.3);transition:border-color 0.5s;}
+body.fun-mode .switcher{border-color:rgba(0,0,0,0.1);box-shadow:0 8px 32px rgba(255,92,92,0.15);}
+.switch-btn{padding:10px 22px;font-size:12.5px;font-weight:700;letter-spacing:0.04em;cursor:pointer;border:none;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);font-family:'DM Mono',monospace;transition:all 0.4s ease;}
+.switch-btn.active{color:#080b10;background:var(--t-green);}
+.switch-btn.fun-btn{font-family:'Nunito',sans-serif;}
+.switch-btn.fun-btn.active{background:var(--f-coral);color:#fff;}
+body.fun-mode .switch-btn:not(.active){color:rgba(0,0,0,0.3);background:rgba(0,0,0,0.03);}
 
-/* ---- cinematic backgrounds (base) ---- */
-  .bg-root{
-    position:fixed; inset:0; z-index:-20; overflow:hidden;
-    transition: background var(--transition), color var(--transition);
-    background: linear-gradient(180deg,#071022 0%,#0f2233 100%);
-  }
-  .bg-vignette{ position: absolute; inset:0; pointer-events:none; mix-blend-mode: multiply; background: radial-gradient(60% 50% at 50% 20%, rgba(0,0,0,0.0), rgba(0,0,0,0.28)); }
+/* PORTFOLIO CONTAINERS */
+.portfolio{display:none;animation:revealPage 0.6s ease both;}
+.portfolio.active{display:block;}
+@keyframes revealPage{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+@keyframes wiggle{0%,100%{transform:rotate(0deg) translateY(0);}25%{transform:rotate(-8deg) translateY(-6px);}75%{transform:rotate(8deg) translateY(-3px);}}
+@keyframes floatBlob{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(-20px,20px) scale(1.05);}66%{transform:translate(20px,-10px) scale(0.97);}}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
 
-  /* crossfade layers (for smooth transitions) */
-  .bg-layer{ position:absolute; inset:0; opacity:0; transition:opacity 820ms cubic-bezier(.2,.9,.22,1); pointer-events:none; }
-  .bg-layer.active{ opacity:1; }
 
-  /* canvas sits above background layers for particles/effects */
-  #bg-canvas{ position:absolute; inset:0; z-index: -10; pointer-events:none; width:100%; height:100%; display:block; }
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
 
-  /* ---- page layout ---- */
-  header{ min-height:84vh; display:flex; align-items:center; justify-content:center; padding:48px 7%; position:relative; }
-  .hero{ max-width:1300px; width:100%; display:grid; grid-template-columns: 1fr 480px; gap:36px; align-items:center; }
-  @media (max-width:980px){ .hero{ grid-template-columns:1fr; } }
+/* ═══════ TECH PORTFOLIO ═══════ */
+#tech{background:var(--t-bg);color:var(--t-text);font-family:'Plus Jakarta Sans',sans-serif;}
 
-  .left{
-    padding-right:10px;
-  }
+.t-nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 64px;background:rgba(8,11,16,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--t-border);}
+.t-logo{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--t-green);letter-spacing:-0.02em;}
+.t-logo span{color:var(--t-text);font-style:italic;font-weight:300;}
+.t-links{display:flex;gap:32px;list-style:none;}
+.t-links a{text-decoration:none;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--t-muted);transition:color 0.3s;position:relative;}
+.t-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--t-green);transform:scaleX(0);transition:transform 0.3s ease;}
+.t-links a:hover{color:var(--t-green);}
+.t-links a:hover::after{transform:scaleX(1);}
 
-  h1{
-    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size: clamp(30px, 4.6vw, 44px); line-height:1.02; margin:0 0 16px;
-    letter-spacing:-0.4px;
-  }
+.t-hero{min-height:100vh;display:flex;align-items:center;padding:120px 64px 80px;position:relative;overflow:hidden;}
+.t-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,160,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,0.025) 1px,transparent 1px);background-size:64px 64px;pointer-events:none;}
+.t-orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.orb1{width:500px;height:500px;background:rgba(0,229,160,0.07);top:10%;right:5%;}
+.orb2{width:300px;height:300px;background:rgba(59,158,255,0.06);bottom:15%;left:10%;}
+.t-hero-content{position:relative;max-width:750px;}
 
-  p.lead{ color:var(--muted); font-size:16px; margin:0 0 22px; max-width:58ch; }
+.t-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--t-green);margin-bottom:28px;animation:fadeSlideUp 0.9s 0.1s both;}
+.t-eyebrow::before{content:'';width:32px;height:1px;background:var(--t-green);}
+.t-hero-name{font-family:'Fraunces',serif;font-size:clamp(54px,8vw,100px);font-weight:700;line-height:0.95;letter-spacing:-0.04em;margin-bottom:12px;animation:fadeSlideUp 0.9s 0.2s both;}
+.t-hero-name .accent{color:var(--t-green);font-style:italic;font-weight:300;}
+.t-hero-role{font-family:'Fraunces',serif;font-size:clamp(18px,2.5vw,28px);color:var(--t-muted);font-style:italic;font-weight:300;margin-bottom:32px;animation:fadeSlideUp 0.9s 0.3s both;}
+.t-hero-bio{font-size:15px;line-height:1.85;color:var(--t-muted);max-width:540px;margin-bottom:48px;animation:fadeSlideUp 0.9s 0.4s both;}
+.t-hero-bio strong{color:var(--t-text);font-weight:500;}
+.t-cta-row{display:flex;gap:14px;animation:fadeSlideUp 0.9s 0.5s both;}
+.t-btn{display:inline-block;padding:13px 28px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;border-radius:2px;cursor:pointer;border:none;transition:all 0.3s ease;}
+.t-btn-primary{background:var(--t-green);color:var(--t-bg);font-weight:500;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);}
+.t-btn-primary:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,160,0.25);}
+.t-btn-ghost{background:transparent;color:var(--t-text);border:1px solid var(--t-border);}
+.t-btn-ghost:hover{border-color:var(--t-green);color:var(--t-green);}
 
-  .cta-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:18px; }
-  .btn{
-    background:var(--accent); color:#031426; padding:10px 16px; border-radius:12px; border:none; cursor:pointer; font-weight:600; box-shadow:var(--shadow);
-    transition: transform 360ms cubic-bezier(.2,.9,.22,1), box-shadow 360ms;
-  }
-  .btn.secondary{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.06); box-shadow:none; }
-  .btn:hover{ transform:translateY(-6px); }
+.t-section{padding:110px 64px;border-top:1px solid var(--t-border);}
+.t-section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--t-green);margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.t-section-label::before{content:'';display:inline-block;width:24px;height:1px;background:var(--t-green);}
+.t-section-title{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,58px);font-weight:700;letter-spacing:-0.035em;line-height:1.05;margin-bottom:64px;}
+.t-section-title em{color:var(--t-green);font-style:italic;font-weight:300;}
 
-  /* ---- mascot area (right) ---- */
-  .mascot-wrap{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
-  .mascot-stage{
-    width:420px; height:420px; border-radius:calc(var(--radius) * 1.2);
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border:1px solid rgba(255,255,255,0.04); padding:18px; box-shadow:var(--shadow);
-    display:flex; align-items:center; justify-content:center; position:relative; overflow:visible;
-    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
-  }
-  @media (max-width:980px){ .mascot-stage{ width:86vw; height:360px; margin:18px auto 0; } }
+/* ABOUT */
+.about-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:start;}
+.about-text p{font-size:15px;line-height:1.85;color:var(--t-muted);margin-bottom:22px;}
+.about-text p strong{color:var(--t-text);font-weight:600;}
+.skills-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px;}
+.skill-tag{font-family:'DM Mono',monospace;font-size:11px;padding:6px 14px;border:1px solid var(--t-border);color:var(--t-muted);border-radius:2px;transition:all 0.25s;letter-spacing:0.05em;}
+.skill-tag:hover{border-color:var(--t-green);color:var(--t-green);background:rgba(0,229,160,0.05);}
+.about-sidebar{display:flex;flex-direction:column;gap:2px;}
+.stat-tile{background:var(--t-card);border:1px solid var(--t-border);padding:28px 32px;transition:all 0.3s;position:relative;overflow:hidden;}
+.stat-tile::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--t-green);transform:scaleY(0);transition:transform 0.3s ease;}
+.stat-tile:hover{border-color:rgba(0,229,160,0.3);transform:translateX(4px);}
+.stat-tile:hover::before{transform:scaleY(1);}
+.stat-tile .num{font-family:'Fraunces',serif;font-size:44px;font-weight:700;color:var(--t-green);line-height:1;margin-bottom:6px;}
+.stat-tile .lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t-muted);}
 
-  /* mascot svg container */
-  .mascot{ width:86%; height:86%; display:block; position:relative; pointer-events:none; }
+/* EXPERIENCE */
+.exp-subsection{margin-bottom:64px;}
+.exp-sub-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--t-blue);margin-bottom:28px;display:flex;align-items:center;gap:14px;}
+.exp-sub-label::after{content:'';flex:1;height:1px;background:var(--t-border);}
+.exp-entry{display:grid;grid-template-columns:180px 1fr;gap:32px;padding:28px 0;border-bottom:1px solid rgba(30,37,48,0.7);transition:background 0.3s;}
+.exp-entry:hover{background:rgba(255,255,255,0.015);}
+.exp-meta{padding-top:4px;}
+.exp-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--t-muted);margin-bottom:6px;}
+.exp-org{font-family:'DM Mono',monospace;font-size:11px;color:var(--t-green);}
+.exp-role{font-family:'Fraunces',serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--t-text);margin-bottom:10px;}
+.exp-desc{font-size:14px;line-height:1.75;color:var(--t-muted);}
+.exp-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.exp-tag{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(0,229,160,0.08);color:var(--t-green);border:1px solid rgba(0,229,160,0.2);letter-spacing:0.05em;}
+.exp-divider{border:none;border-top:1px solid var(--t-border);margin:60px 0;}
 
-  /* dog absolute for motion */
-  .dog-anim{ position:absolute; width:66%; left:calc(50% - 33%); bottom:10%; transform-origin:center bottom; transition: transform var(--transition), left var(--transition), bottom var(--transition), opacity var(--transition); }
-  .dog-anim.hidden{ opacity:0; transform:translateY(8px) scale(0.98); }
+/* EXTRACURRICULARS */
+.extra-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:2px;}
+.extra-card{background:var(--t-card);border:1px solid var(--t-border);padding:32px;transition:all 0.35s ease;position:relative;overflow:hidden;}
+.extra-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--t-green),var(--t-blue));transform:scaleX(0);transition:transform 0.4s ease;}
+.extra-card:hover{transform:translateY(-4px);border-color:rgba(0,229,160,0.2);}
+.extra-card:hover::after{transform:scaleX(1);}
+.extra-icon{font-size:28px;margin-bottom:16px;display:block;}
+.extra-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;letter-spacing:-0.02em;color:var(--t-text);margin-bottom:8px;}
+.extra-role-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(59,158,255,0.1);color:var(--t-blue);border:1px solid rgba(59,158,255,0.2);margin-bottom:14px;letter-spacing:0.06em;}
+.extra-desc{font-size:13px;line-height:1.7;color:var(--t-muted);}
 
-  /* modes will set where dog sits and how it animates */
-  .mode-winter .mascot-stage{ background: linear-gradient(180deg,#071829 0%, #071b2b 100%); border-color: rgba(140,200,255,0.08); }
-  .mode-spring .mascot-stage{ background: linear-gradient(180deg,#f7fff6 0%, #ecfef1 100%); border-color: rgba(80,200,120,0.08); }
-  .mode-summer .mascot-stage{ background: linear-gradient(180deg,#fffaf0 0%, #fff0d6 100%); border-color: rgba(255,170,80,0.08); }
-  .mode-rainy .mascot-stage{ background: linear-gradient(180deg,#061026 0%, #0b1a27 100%); border-color: rgba(120,220,240,0.06); }
-  .mode-ai .mascot-stage{ background: linear-gradient(180deg,#010514 0%, #07102a 100%); border-color: rgba(100,180,255,0.08); }
+/* RESEARCH */
+.research-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.research-card{background:var(--t-card);border:1px solid var(--t-border);padding:36px;border-radius:2px;transition:all 0.35s ease;position:relative;overflow:hidden;}
+.research-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--t-green),var(--t-blue));opacity:0;transition:opacity 0.3s;}
+.research-card:hover{border-color:rgba(0,229,160,0.25);transform:translateY(-4px);box-shadow:0 20px 48px rgba(0,0,0,0.4);}
+.research-card:hover::before{opacity:1;}
+.research-num{font-family:'Fraunces',serif;font-size:64px;font-weight:700;color:var(--t-faint);line-height:1;margin-bottom:12px;letter-spacing:-0.05em;}
+.research-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;letter-spacing:-0.02em;color:var(--t-text);margin-bottom:12px;}
+.research-body{font-size:14px;line-height:1.8;color:var(--t-muted);margin-bottom:20px;}
+.research-status{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--t-green);}
+.research-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--t-green);animation:pulse 2s infinite;}
 
-  /* dog motion keyframes (calm premium) */
-  @keyframes breathe {
-    0%,100%{ transform: translateY(0) scale(1); }
-    50%{ transform: translateY(-6px) scale(1.006); }
-  }
-  @keyframes tail-wag {
-    0%,100%{ transform: rotate(-6deg); }
-    50%{ transform: rotate(10deg); }
-  }
-  @keyframes head-nod {
-    0%,100%{ transform: translateY(0) rotate(0); }
-    50%{ transform: translateY(-6px) rotate(-1.8deg); }
-  }
-  @keyframes run-loop {
-    0%{ transform: translateX(0); }
-    50%{ transform: translateX(24px); }
-    100%{ transform: translateX(0); }
-  }
+/* CONTACT */
+.t-contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.t-contact-left p{font-size:15px;line-height:1.8;color:var(--t-muted);margin-bottom:36px;}
+.contact-links{display:flex;flex-direction:column;gap:12px;}
+.contact-link{display:flex;align-items:center;gap:14px;text-decoration:none;font-family:'DM Mono',monospace;font-size:13px;color:var(--t-text);padding:14px 20px;border:1px solid var(--t-border);background:var(--t-card);transition:all 0.3s;letter-spacing:0.04em;}
+.contact-link:hover{border-color:var(--t-green);color:var(--t-green);transform:translateX(4px);}
+.t-contact-form{display:flex;flex-direction:column;gap:12px;}
+.t-input{width:100%;padding:13px 18px;background:var(--t-card);border:1px solid var(--t-border);color:var(--t-text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;border-radius:2px;}
+.t-input:focus{border-color:var(--t-green);}
+.t-input::placeholder{color:var(--t-muted);}
+textarea.t-input{height:110px;resize:vertical;}
 
-  /* per-mode dog positions + subtle transforms */
-  .mode-winter .dog-anim{ left:62%; bottom:8%; transform:translateY(0) scale(1); animation: breathe 4.8s ease-in-out infinite; }
-  .mode-spring .dog-anim{ left:58%; bottom:10%; animation: breathe 3.6s ease-in-out infinite, head-nod 5.2s ease-in-out infinite; }
-  .mode-summer .dog-anim{ left:20%; bottom:6%; animation: run-loop 2.2s linear infinite; } /* runs across low area */
-  .mode-rainy .dog-anim{ left:62%; bottom:14%; transform:scale(.98); animation: none; }
-  .mode-ai .dog-anim{ left:62%; bottom:18%; animation: breathe 3.2s ease-in-out infinite; filter: drop-shadow(0 12px 36px rgba(40,110,220,0.12)); }
+/* PROJECTS */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+.proj-card{background:var(--t-card);border:1px solid var(--t-border);padding:32px;border-radius:2px;transition:all 0.35s ease;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--t-green),var(--t-blue));transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease;}
+.proj-card:hover{transform:translateY(-5px);border-color:rgba(0,229,160,0.2);box-shadow:0 20px 48px rgba(0,0,0,0.4);}
+.proj-card:hover::before{transform:scaleX(1);}
+.proj-status-badge{display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:16px;width:fit-content;}
+.proj-status-badge.ongoing{background:rgba(0,229,160,0.08);color:var(--t-green);border:1px solid rgba(0,229,160,0.2);}
+.proj-status-badge.ongoing::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--t-green);animation:pulse 2s infinite;}
+.proj-status-badge.completed{background:rgba(59,158,255,0.08);color:var(--t-blue);border:1px solid rgba(59,158,255,0.2);}
+.proj-title{font-family:'Fraunces',serif;font-size:19px;font-weight:700;letter-spacing:-0.02em;color:var(--t-text);margin-bottom:12px;line-height:1.2;}
+.proj-desc{font-size:13.5px;line-height:1.75;color:var(--t-muted);flex:1;margin-bottom:20px;}
+.proj-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.proj-tag{font-family:'DM Mono',monospace;font-size:9.5px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.04);color:var(--t-muted);border:1px solid var(--t-border);letter-spacing:0.05em;}
 
-  /* accessory animations (umbrella, scarf, glasses etc.) via group classes toggled by JS */
-  .scarf{ transform-origin: 40% 60%; animation: tail-wag 1.2s ease-in-out infinite; }
-  .petals{ opacity:0.96; filter: blur(0.2px); }
-  .umbrella{ transform-origin:center bottom; }
-  .glasses{ filter: drop-shadow(0 6px 16px rgba(60,160,255,0.12)); }
+.t-footer{border-top:1px solid var(--t-border);padding:28px 64px;display:flex;align-items:center;justify-content:space-between;}
+.t-footer p{font-family:'DM Mono',monospace;font-size:11px;color:var(--t-muted);letter-spacing:0.08em;}
 
-  /* subtle UI top-right mode selector */
-  .mode-control{ position:fixed; right:22px; top:22px; display:flex; gap:8px; z-index:1200; align-items:center; }
-  .mode-toggle{ background:var(--card-bg); border:1px solid rgba(255,255,255,0.04); padding:10px 12px; border-radius:999px; cursor:pointer; backdrop-filter: blur(8px); color:var(--muted); font-weight:600; font-size:13px; transition: transform 250ms; }
-  .mode-toggle:hover{ transform:translateY(-4px); }
-  .mode-panel{ position:absolute; right:0; top:48px; background:var(--glass); border-radius:12px; padding:8px; display:none; box-shadow:0 12px 30px rgba(2,6,23,0.5); }
-  .mode-panel.open{ display:block; }
-  .mode-option{ padding:8px 12px; border-radius:8px; cursor:pointer; color:var(--text); font-size:14px; }
-  .mode-option:hover{ background:rgba(255,255,255,0.02); transform:translateX(6px); }
+/* ═══════ PERSONAL PORTFOLIO ═══════ */
+#personal{background:var(--f-bg);color:var(--f-text);font-family:'Nunito',sans-serif;}
 
-  /* reduced-motion: simplify large animations */
-  @media (prefers-reduced-motion: reduce){
-    .dog-anim, .mascot-stage, .bg-layer, #bg-canvas{ animation:none !important; transition:none !important; transform:none !important; }
-  }
+.f-nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:16px 52px;background:rgba(255,251,245,0.88);backdrop-filter:blur(20px);border-bottom:2px dashed rgba(0,0,0,0.08);}
+.f-logo{font-family:'Caveat',cursive;font-size:26px;font-weight:700;color:var(--f-coral);}
+.f-links{display:flex;gap:28px;list-style:none;}
+.f-links a{text-decoration:none;font-size:13px;font-weight:700;color:var(--f-muted);transition:color 0.3s;position:relative;}
+.f-links a:hover{color:var(--f-coral);}
 
-  /* footer / page body */
-  main{ padding:48px 8%; color:var(--muted); }
-  footer{ padding:22px 8%; color:var(--muted); text-align:center; }
+.f-hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 52px 80px;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.4;pointer-events:none;animation:floatBlob 8s ease-in-out infinite;}
+.blob1{width:400px;height:400px;background:var(--f-yellow);top:-80px;left:-100px;animation-delay:0s;}
+.blob2{width:300px;height:300px;background:var(--f-pink);bottom:-60px;right:-80px;animation-delay:2.5s;}
+.blob3{width:240px;height:240px;background:var(--f-mint);top:35%;left:55%;animation-delay:5s;}
+.f-hero-content{position:relative;z-index:2;}
+.f-wave-greeting{font-family:'Caveat',cursive;font-size:clamp(18px,3vw,26px);color:var(--f-muted);margin-bottom:20px;animation:fadeSlideUp 0.8s 0.1s both;}
+.f-hero-name{font-family:'Nunito',sans-serif;font-size:clamp(60px,10vw,120px);font-weight:900;line-height:0.9;letter-spacing:-0.04em;margin-bottom:16px;animation:fadeSlideUp 0.8s 0.2s both;}
+.f-name-lexi{color:var(--f-coral);}
+.f-hero-tagline{font-family:'Caveat',cursive;font-size:clamp(22px,4vw,38px);color:var(--f-text);margin-bottom:32px;animation:fadeSlideUp 0.8s 0.3s both;}
+.f-hero-tagline span{color:var(--f-coral);}
+.f-emoji-row{display:flex;justify-content:center;gap:16px;font-size:32px;margin-bottom:48px;animation:fadeSlideUp 0.8s 0.4s both;}
+.f-emoji-row span{display:inline-block;animation:wiggle 3s ease-in-out infinite;cursor:default;}
+.f-emoji-row span:nth-child(2){animation-delay:0.3s;}
+.f-emoji-row span:nth-child(3){animation-delay:0.6s;}
+.f-emoji-row span:nth-child(4){animation-delay:0.9s;}
+.f-emoji-row span:nth-child(5){animation-delay:1.2s;}
+.f-scroll-hint{font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--f-muted);animation:bounce 2s ease-in-out infinite;}
+
+.f-section{padding:100px 52px;position:relative;}
+.f-section-label{font-family:'Caveat',cursive;font-size:22px;font-weight:700;color:var(--f-coral);margin-bottom:8px;}
+.f-section-title{font-family:'Nunito',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:900;letter-spacing:-0.04em;line-height:1.0;margin-bottom:56px;color:var(--f-text);}
+.f-section-title .pop{display:inline-block;background:var(--f-yellow);padding:0 10px;border-radius:4px;transform:rotate(-1.5deg);margin:0 4px;}
+
+/* ABOUT BOX */
+.f-about-box{background:#fff;border-radius:24px;padding:56px 64px;box-shadow:0 4px 0 0 rgba(0,0,0,0.07),0 12px 40px rgba(0,0,0,0.06);display:grid;grid-template-columns:1fr auto;gap:64px;align-items:center;position:relative;overflow:hidden;}
+.f-about-box::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--f-coral),var(--f-yellow),var(--f-mint),var(--f-blue),var(--f-purple));}
+.f-about-text p{font-size:16px;line-height:1.85;color:var(--f-muted);margin-bottom:18px;}
+.f-about-text p strong{color:var(--f-text);font-weight:800;}
+.f-about-deco{font-size:100px;line-height:1;user-select:none;animation:wiggle 5s ease-in-out infinite;}
+
+/* INTEREST CARDS */
+.interests-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.interest-card{background:#fff;border-radius:20px;padding:40px 36px;box-shadow:0 4px 0 0 rgba(0,0,0,0.07),0 8px 24px rgba(0,0,0,0.05);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);position:relative;overflow:hidden;border:2px solid transparent;cursor:default;}
+.interest-card:hover{transform:translateY(-10px) rotate(1deg);box-shadow:0 16px 0 0 rgba(0,0,0,0.07),0 24px 48px rgba(0,0,0,0.1);}
+.interest-card.uke{border-color:var(--f-yellow);}
+.interest-card.uke:hover{background:#fffdf0;}
+.interest-card.photo{border-color:var(--f-mint);}
+.interest-card.photo:hover{background:#f0fffb;}
+.interest-card.sing{border-color:var(--f-pink);}
+.interest-card.sing:hover{background:#fff5f8;}
+.interest-emoji{font-size:52px;display:block;margin-bottom:20px;animation:wiggle 4s ease-in-out infinite;}
+.photo .interest-emoji{animation-delay:1s;}
+.sing .interest-emoji{animation-delay:2s;}
+.interest-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--f-text);margin-bottom:8px;letter-spacing:-0.02em;}
+.interest-subtitle{font-family:'Caveat',cursive;font-size:16px;color:var(--f-muted);margin-bottom:16px;}
+.interest-desc{font-size:14px;line-height:1.75;color:var(--f-muted);}
+.interest-tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+.f-tag{font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;letter-spacing:0.04em;}
+.f-tag-y{background:#fff3cd;color:#a07000;}
+.f-tag-m{background:#d0f5e8;color:#0a7a50;}
+.f-tag-p{background:#ffe0e8;color:#c00040;}
+
+/* GALLERY */
+.f-gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:200px 200px;gap:16px;}
+.gallery-tile{border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:40px;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;position:relative;overflow:hidden;}
+.gallery-tile:hover{transform:scale(1.05) rotate(1.5deg);}
+.gallery-tile:nth-child(1){background:#ffe8d6;grid-column:span 2;}
+.gallery-tile:nth-child(2){background:#d6eaff;}
+.gallery-tile:nth-child(3){background:#d6f5e8;}
+.gallery-tile:nth-child(4){background:#ffd6e0;grid-column:span 2;}
+.gallery-tile:nth-child(5){background:#f0e8ff;}
+.gallery-tile .tile-lbl{position:absolute;bottom:14px;left:18px;font-family:'Caveat',cursive;font-size:16px;font-weight:700;color:rgba(0,0,0,0.4);}
+
+/* CONTACT */
+.f-contact-inner{text-align:center;max-width:640px;margin:0 auto;}
+.f-contact-inner p{font-size:17px;line-height:1.75;color:var(--f-muted);margin-bottom:40px;}
+.f-contact-inner p strong{color:var(--f-text);font-weight:800;}
+.f-btn-row{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;}
+.f-btn{display:inline-block;padding:14px 28px;border-radius:50px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;text-decoration:none;border:none;cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.f-btn:hover{transform:translateY(-4px) scale(1.04);}
+.f-btn-coral{background:var(--f-coral);color:#fff;box-shadow:0 6px 0 #c93c3c;}
+.f-btn-coral:hover{box-shadow:0 10px 0 #c93c3c;}
+.f-btn-outline{background:transparent;color:var(--f-text);border:2px solid var(--f-text);}
+.f-btn-outline:hover{background:var(--f-text);color:#fff;}
+.f-btn-purple{background:var(--f-purple);color:#fff;box-shadow:0 6px 0 #9040cc;}
+.f-btn-purple:hover{box-shadow:0 10px 0 #9040cc;}
+
+.f-footer{border-top:2px dashed rgba(0,0,0,0.08);padding:28px 52px;display:flex;align-items:center;justify-content:space-between;background:var(--f-bg);}
+.f-footer p{font-family:'Caveat',cursive;font-size:17px;color:var(--f-muted);}
+
+@media(max-width:768px){
+  .t-nav,.f-nav{padding:16px 24px;}
+  .t-links,.f-links{display:none;}
+  .t-hero,.f-hero{padding:100px 24px 60px;}
+  .t-section,.f-section{padding:80px 24px;}
+  .about-layout,.research-layout,.t-contact-inner,.f-about-box{grid-template-columns:1fr;gap:40px;}
+  .f-gallery-grid{grid-template-columns:1fr 1fr;}
+  .gallery-tile:nth-child(1),.gallery-tile:nth-child(4){grid-column:span 1;}
+  .t-footer,.f-footer{padding:24px;flex-direction:column;gap:8px;text-align:center;}
+}
 </style>
 </head>
 <body>
-  <div id="app" class="app mode-winter"> <!-- class will change to mode-XXX -->
-    <!-- cinematic background root & layers -->
-    <div id="bgRoot" class="bg-root" aria-hidden>
-      <!-- layered gradients for dramatic crossfade -->
-      <div id="bgWinter" class="bg-layer" style="background:linear-gradient(180deg,#071829 0%, #071b2b 100%);"></div>
-      <div id="bgSpring" class="bg-layer" style="background:linear-gradient(160deg,#f7fff6 0%, #eafbf0 100%);"></div>
-      <div id="bgSummer" class="bg-layer" style="background:linear-gradient(160deg,#fff7e6 0%, #fff0d4 100%);"></div>
-      <div id="bgRainy" class="bg-layer" style="background:linear-gradient(160deg,#06121a 0%, #0a1824 100%);"></div>
-      <div id="bgAI" class="bg-layer" style="background:linear-gradient(160deg,#010614 0%, #07102a 100%);"></div>
 
-      <!-- optional soft vignette -->
-      <div class="bg-vignette"></div>
+<div class="cursor-dot" id="dot"></div>
+<div class="cursor-ring" id="ring"></div>
 
-      <!-- canvas for particle animations -->
-      <canvas id="bg-canvas"></canvas>
-    </div>
 
-    <!-- top-right control -->
-    <div class="mode-control" aria-hidden>
-      <div class="mode-toggle" id="modeBtn" tabindex="0" aria-haspopup="true" aria-expanded="false">Mode ▾</div>
-      <div id="modePanel" class="mode-panel" role="menu" aria-hidden="true">
-        <div class="mode-option" data-mode="auto">🌍 Auto (season)</div>
-        <div class="mode-option" data-mode="winter">❄ Winter</div>
-        <div class="mode-option" data-mode="spring">🌸 Spring</div>
-        <div class="mode-option" data-mode="summer">☀ Summer</div>
-        <div class="mode-option" data-mode="rainy">🌧 Rainy</div>
-        <div class="mode-option" data-mode="ai">🤖 AI</div>
+<!-- SWITCHER -->
+<div class="switcher">
+  <button class="switch-btn active" id="btn-tech" onclick="showPortfolio('tech')">💻 Tech</button>
+  <button class="switch-btn fun-btn" id="btn-fun" onclick="showPortfolio('personal')">🎵 Lexi</button>
+</div>
+
+<!-- ████████████████████████████████████
+     TECH PORTFOLIO
+████████████████████████████████████ -->
+<div class="portfolio active" id="tech">
+
+  <nav class="t-nav">
+    <div class="t-logo">Lexi <span>Nalagandla</span></div>
+    <ul class="t-links">
+      <li><a href="#t-about">About</a></li>
+      <li><a href="#t-experience">Experience</a></li>
+      <li><a href="#t-projects">Projects</a></li>
+      <li><a href="#t-extra">Extracurriculars</a></li>
+      <li><a href="#t-research">Research</a></li>
+      <li><a href="#t-contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="t-hero">
+    <div class="t-grid"></div>
+    <div class="t-orb orb1"></div>
+    <div class="t-orb orb2"></div>
+    <div class="t-hero-content">
+      <h1 class="t-hero-name">Alekya<br><span class="accent">Nalagandla</span></h1>
+      <p class="t-hero-role">but you can call me Lexi</p>
+      <div class="t-eyebrow">Open to opportunities</div>
+      <p class="t-hero-bio">
+        MS Computer Science candidate at <strong>USC Viterbi</strong> (Dec 2026), specializing in machine learning, NLP, and intelligent systems. I build end-to-end AI pipelines — from fine-tuned LLMs and clinical decision support tools to autonomous robotics — and I care deeply about making them work in the real world, not just on paper.
+      </p>
+      <div class="t-cta-row">
+        <a href="#t-experience" class="t-btn t-btn-primary">View My Work</a>
+        <a href="#t-contact" class="t-btn t-btn-ghost">Let's Connect →</a>
       </div>
     </div>
+  </section>
 
-    <!-- header hero -->
-    <header>
-      <div class="hero" role="banner">
-        <div class="left">
-          <h1 id="heroTitle">Designing intelligent, human-first products — with purpose & craft.</h1>
-          <p class="lead" id="heroLead">I combine AI, UI/UX, photography and a love of nature to build calm, delightful experiences. Explore the site modes — the environment, lighting and the mascot adapt to each mode to show design thinking in motion.</p>
-
-          <div class="cta-row">
-            <button class="btn" id="enterBtn">See work</button>
-            <button class="btn secondary" id="caseBtn">UX Case Study</button>
-          </div>
-        </div>
-
-        <div class="mascot-wrap">
-          <div class="mascot-stage" id="mascotStage">
-            <!-- large SVG mascot (stylized soft-flat dog). Groups per mode visible via JS -->
-            <svg class="mascot" viewBox="0 0 860 720" preserveAspectRatio="xMidYMid meet" aria-hidden="false" role="img" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <filter id="drop" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="18" stdDeviation="30" flood-color="#000" flood-opacity="0.25"/></filter>
-                <linearGradient id="furGrad" x1="0" x2="1"><stop offset="0" stop-color="#fff7f0"/><stop offset="1" stop-color="#f4e6da"/></linearGradient>
-                <linearGradient id="innerGrad" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f8f4ef"/></linearGradient>
-                <linearGradient id="glassGrad" x1="0" x2="1"><stop offset="0" stop-color="#6fbff6"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
-              </defs>
-
-              <!-- background subtle circle -->
-              <g id="mascotBackground" opacity="0.14"><circle cx="430" cy="320" r="260" fill="url(#innerGrad)"/></g>
-
-              <!-- BASE DOG (shared shapes) -->
-              <g id="dogBase" filter="url(#drop)" transform="translate(100,110)">
-                <!-- body -->
-                <ellipse cx="330" cy="320" rx="250" ry="150" fill="url(#furGrad)"/>
-                <!-- head -->
-                <g id="head" transform="translate(160,80)">
-                  <ellipse cx="120" cy="120" rx="98" ry="90" fill="#fff7f0"/>
-                  <!-- ear -->
-                  <path id="ear-left" d="M46 46 q-32 -20 -48 6 q28 16 44 22z" fill="#e9d7c9" transform="translate(-10,0)"/>
-                  <path id="ear-right" d="M210 60 q28 -14 40 6 q-20 12 -36 18z" fill="#e9d7c9" transform="translate(6,4)"/>
-                  <!-- face shading -->
-                  <ellipse cx="120" cy="140" rx="56" ry="40" fill="rgba(0,0,0,0.03)"/>
-                  <!-- eyes -->
-                  <g id="eyes">
-                    <circle cx="96" cy="120" r="8" fill="#3a2a24"/>
-                    <circle cx="144" cy="120" r="8" fill="#3a2a24"/>
-                  </g>
-                  <!-- snout & nose -->
-                  <path d="M110 148 q10 10 28 0" stroke="#3a2a24" stroke-width="3" stroke-linecap="round" fill="none"/>
-                  <circle cx="126" cy="135" r="6" fill="#372a24"/>
-                </g>
-
-                <!-- tail (animatable group) -->
-                <g id="tail" transform="translate(490,240)">
-                  <path d="M0 0 q40 -30 90 -18 q6 22 -12 36 q-28 18 -78 -18z" fill="#f4e2d6" />
-                </g>
-
-                <!-- legs -->
-                <g id="legs" transform="translate(120,360)">
-                  <ellipse cx="70" cy="70" rx="46" ry="34" fill="#f4e2d6"/>
-                  <ellipse cx="300" cy="70" rx="46" ry="34" fill="#f4e2d6"/>
-                </g>
-
-                <!-- accessory groups for each mode (hidden/shown by JS) -->
-
-                <!-- winter: scarf + breath -->
-                <g id="scarfGroup" opacity="0">
-                  <path d="M140 220 q80 36 140 6 q6 -30 -44 -34 q-86 4 -96 28z" fill="#9ed8ff"/>
-                  <rect x="236" y="238" width="30" height="56" rx="8" fill="#7ec9ff" transform="rotate(-18 251 266)"/>
-                  <!-- breath puffs (animated circles) -->
-                  <g id="breath" transform="translate(140,120)">
-                    <circle cx="40" cy="40" r="6" fill="rgba(255,255,255,0.7)" opacity="0.0"/>
-                    <circle cx="58" cy="36" r="8" fill="rgba(255,255,255,0.5)" opacity="0.0"/>
-                    <circle cx="78" cy="34" r="10" fill="rgba(255,255,255,0.36)" opacity="0.0"/>
-                  </g>
-                </g>
-
-                <!-- spring: petals -->
-                <g id="petalsGroup" opacity="0">
-                  <g class="petals" transform="translate(20,20)">
-                    <ellipse cx="40" cy="40" rx="10" ry="18" fill="#ffb6c4" transform="rotate(12)"/>
-                    <ellipse cx="118" cy="12" rx="8" ry="14" fill="#ffd9b6" transform="rotate(-18)"/>
-                    <ellipse cx="210" cy="20" rx="9" ry="16" fill="#d6ffd7" transform="rotate(6)"/>
-                  </g>
-                </g>
-
-                <!-- summer: movement markers (sunflare) -->
-                <g id="sunflareGroup" opacity="0">
-                  <circle cx="480" cy="40" r="36" fill="rgba(255,220,120,0.12)"/>
-                  <circle cx="500" cy="60" r="8" fill="rgba(255,220,120,0.06)"/>
-                </g>
-
-                <!-- rainy: umbrella -->
-                <g id="umbrellaGroup" opacity="0" transform="translate(400, -30)">
-                  <path d="M-60 20 q60 -80 140 0 z" fill="#6fd8dd" stroke="#4fc7cc" stroke-width="2"/>
-                  <rect x="-2" y="20" width="6" height="90" rx="3" fill="#2b2b2b"/>
-                </g>
-
-                <!-- ai: glasses + node -->
-                <g id="glassesGroup" opacity="0">
-                  <rect x="78" y="64" rx="10" ry="10" width="48" height="22" fill="#041827"/>
-                  <rect x="122" y="64" rx="10" ry="10" width="48" height="22" fill="#041827" transform="translate(10,0)"/>
-                  <g id="aiNodes" transform="translate(360,80)" opacity="0.0">
-                    <circle cx="0" cy="0" r="4" fill="#6bf"/>
-                    <circle cx="40" cy="20" r="4" fill="#6bf"/>
-                    <line x1="0" y1="0" x2="40" y2="20" stroke="#6bf" stroke-width="1.2" stroke-linecap="round"/>
-                  </g>
-                </g>
-
-              </g>
-            </svg>
-
-            <!-- dog grouping which will be moved/animated by JS -->
-            <div id="dogAnim" class="dog-anim" aria-hidden>
-              <!-- To keep logic simple, dog visuals live inside SVG above; dog-anim acts as transform wrapper -->
-            </div>
-          </div>
+  <!-- ABOUT -->
+  <section class="t-section" id="t-about">
+    <div class="t-section-label">Who I am</div>
+    <h2 class="t-section-title">About <em>Me</em></h2>
+    <div class="about-layout">
+      <div class="about-text reveal">
+        <p>I'm <strong>Lexi</strong> — a USC Viterbi MS CS student (GPA 3.5/4.0) with a BTech in Computer Science & Cyber-Physical Systems from VIT India (90.6%). My work sits at the intersection of applied ML, NLP, and autonomous systems: I've deployed ensemble models achieving 98% clinical accuracy, fine-tuned quantized LLMs under GPU constraints, and designed AUV path-planning frameworks from scratch.</p>
+        <p>What sets me apart is <strong>breadth with depth</strong> — I'm equally at home writing C kernel code, orchestrating multi-agent LLM pipelines, and extracting insight from messy healthcare datasets. I've shipped across the full stack: research prototype → production system → interpretable output for end users.</p>
+        <p>Beyond the code, I mentor the next generation through USC Viterbi's graduate program and supervise competitive STEM events at the USC Science Olympiad Invitational. The rest of me lives on the <strong>🎵 Lexi</strong> tab.</p>
+        <div class="skills-list">
+          <span class="skill-tag">Python</span><span class="skill-tag">PyTorch</span><span class="skill-tag">Machine Learning</span><span class="skill-tag">NLP</span><span class="skill-tag">Deep Learning</span><span class="skill-tag">SQL</span><span class="skill-tag">C++</span><span class="skill-tag">Flask</span><span class="skill-tag">LangChain</span><span class="skill-tag">HuggingFace</span><span class="skill-tag">AWS</span><span class="skill-tag">OpenCV</span><span class="skill-tag">Git</span><span class="skill-tag">CAD / Robotics</span>
         </div>
       </div>
-    </header>
+      <div class="about-sidebar reveal">
+        <div class="stat-tile"><div class="num">3.5</div><div class="lbl">USC GPA</div></div>
+        <div class="stat-tile"><div class="num">100+</div><div class="lbl">Students Tutored</div></div>
+        <div class="stat-tile"><div class="num">6+</div><div class="lbl">Projects Shipped</div></div>
+        <div class="stat-tile"><div class="num">2</div><div class="lbl">Countries Worked In</div></div>
+      </div>
+    </div>
+  </section>
 
-    <main>
-      <section style="max-width:980px; margin: 0 auto 40px; color:var(--muted);">
-        <h3 style="color:var(--accent); margin-top:0;">Why modes matter</h3>
-        <p>Each mode intentionally adjusts lighting, mood, micro-interaction rhythm and the mascot behavior to demonstrate how environment influences UX. This site is both a portfolio and a living case study in motion-first design.</p>
-      </section>
-    </main>
+  <!-- EXPERIENCE -->
+  <section class="t-section" id="t-experience">
+    <div class="t-section-label">Where I've been</div>
+    <h2 class="t-section-title">Experience <em>&</em><br>Involvement</h2>
 
-    <footer>© 2026 Your Name • Creative Technologist • UI/UX • AI</footer>
-  </div>
+    <div class="exp-subsection reveal">
+      <div class="exp-sub-label">Professional Work</div>
 
-<script>
-/* ---------------------------
-   Premium Seasonal Engine
-   - auto season detection (NH)
-   - manual override + localStorage
-   - crossfade background layers
-   - canvas animation modes (snow/petals/sun/rain/ai net)
-   - dog accessory toggles & position/animation tuning
-   --------------------------- */
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">Jul 2025 — Present</div>
+          <div class="exp-org">USC Housing</div>
+        </div>
+        <div>
+          <div class="exp-role">Resident Manager</div>
+          <p class="exp-desc">Serve as the operational anchor for a USC residential community — triaging and resolving housing, maintenance, and access issues as the primary point of contact. Maintain accurate records across Microsoft Office and Google Workspace while holding the administrative and human sides of the role in equal balance. Promoted from Student Worker within 3 months.</p>
+          <div class="exp-tags"><span class="exp-tag">Operations Management</span><span class="exp-tag">Student Welfare</span><span class="exp-tag">Excel</span><span class="exp-tag">Google Workspace</span><span class="exp-tag">Record Keeping</span></div>
+        </div>
+      </div>
 
-(() => {
-  const APP = document.getElementById('app');
-  const bgRoot = document.getElementById('bgRoot');
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  const modeBtn = document.getElementById('modeBtn');
-  const modePanel = document.getElementById('modePanel');
-  const options = Array.from(document.querySelectorAll('.mode-option'));
-  const bgLayers = {
-    winter: document.getElementById('bgWinter'),
-    spring: document.getElementById('bgSpring'),
-    summer: document.getElementById('bgSummer'),
-    rainy: document.getElementById('bgRainy'),
-    ai: document.getElementById('bgAI')
-  };
-  const scarfGroup = document.getElementById('scarfGroup');
-  const petalsGroup = document.getElementById('petalsGroup');
-  const umbrellaGroup = document.getElementById('umbrellaGroup');
-  const glassesGroup = document.getElementById('glassesGroup');
-  const breathGroup = document.getElementById('breath');
-  const aiNodes = document.getElementById('aiNodes');
-  const sunflare = document.getElementById('sunflareGroup');
-  const dogAnim = document.getElementById('dogAnim');
-  const dogStage = document.getElementById('mascotStage');
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">Jun 2024 — Aug 2024</div>
+          <div class="exp-org">VIT Automation & Robotics Lab</div>
+        </div>
+        <div>
+          <div class="exp-role">Research Intern — Autonomous Systems</div>
+          <p class="exp-desc">Designed a surveillance-grade Autonomous Underwater Vehicle (AUV) for naval defense applications within the Automation & Robotics Lab. Proposed and modeled a self-powered energy harvesting module projected to extend mission endurance by ~30%. Architected a hybrid A* + potential-field path-planning framework enabling adaptive underwater navigation via sonar, IMU, and depth sensor fusion — enabling real-time object detection and central command data relay.</p>
+          <div class="exp-tags"><span class="exp-tag">AUV Design</span><span class="exp-tag">CAD</span><span class="exp-tag">Sensor Fusion</span><span class="exp-tag">A* Path Planning</span><span class="exp-tag">Robotics</span><span class="exp-tag">Naval Systems</span></div>
+        </div>
+      </div>
 
-  /* state */
-  const state = {
-    mode: null,       // 'auto' or specific
-    season: null,     // active season string
-    manual: localStorage.getItem('site_manual') === 'true',
-    storedMode: localStorage.getItem('site_mode') || 'auto'
-  };
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">May 2023 — Aug 2023</div>
+          <div class="exp-org">TheSmartBridge</div>
+        </div>
+        <div>
+          <div class="exp-role">Data Science Extern — Healthcare AI</div>
+          <p class="exp-desc">Owned the full ML pipeline for a clinical decision support system targeting early-stage Chronic Kidney Disease detection. Engineered a voting ensemble (Random Forest + SVM + Gradient Boosting) achieving <strong>98% accuracy</strong> on clinical benchmark data. Built the production-ready Flask API layer, conducted rigorous feature engineering on patient records, and delivered interpretable SHAP-based visual outputs designed for clinical adoption — not just model metrics.</p>
+          <div class="exp-tags"><span class="exp-tag">Python</span><span class="exp-tag">Scikit-learn</span><span class="exp-tag">Ensemble Methods</span><span class="exp-tag">Flask</span><span class="exp-tag">SHAP</span><span class="exp-tag">Healthcare ML</span></div>
+        </div>
+      </div>
 
-  /* season detection (northern hemisphere) */
-  function seasonFromDate(d = new Date()){
-    const m = d.getMonth() + 1;
-    if(m === 12 || m <= 2) return 'winter';
-    if(m >= 3 && m <= 5) return 'spring';
-    if(m >= 6 && m <= 8) return 'summer';
-    return 'rainy';
-  }
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">Oct 2023 — Jan 2025</div>
+          <div class="exp-org">Course Hero</div>
+        </div>
+        <div>
+          <div class="exp-role">Computer Science & Mathematics Tutor</div>
+          <p class="exp-desc">Provided 1:1 academic coaching to <strong>100+ graduate and undergraduate students</strong> across a 15-month freelance engagement. Core subject areas: ML fundamentals, Python (OOP, data structures, algorithms), calculus, linear algebra, and probability theory. Developed reusable study frameworks and problem-set guides that consistently accelerated student understanding of complex topics in applied CS and mathematics.</p>
+          <div class="exp-tags"><span class="exp-tag">Python</span><span class="exp-tag">ML Fundamentals</span><span class="exp-tag">Data Structures</span><span class="exp-tag">Algorithms</span><span class="exp-tag">Linear Algebra</span></div>
+        </div>
+      </div>
+    </div>
 
-  /* apply UI mode (auto or explicit) */
-  function applyMode(mode){
-    if(mode === 'auto'){ mode = 'auto'; state.mode = 'auto'; localStorage.setItem('site_mode','auto'); }
-    else { state.mode = mode; localStorage.setItem('site_mode', mode); }
+    <hr class="exp-divider">
 
-    // compute season to activate
-    const season = (state.mode === 'auto') ? seasonFromDate() : state.mode;
-    state.season = season;
+    <div class="exp-subsection reveal">
+      <div class="exp-sub-label">Volunteer Work</div>
 
-    // root class
-    APP.classList.remove('mode-winter','mode-spring','mode-summer','mode-rainy','mode-ai');
-    APP.classList.add('mode-' + season);
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">2024 — Present</div>
+          <div class="exp-org">USC Science Olympiad Invitational</div>
+        </div>
+        <div>
+          <div class="exp-role">Event Supervisor</div>
+          <p class="exp-desc">Supervised competitive STEM events at the <strong>USC Science Olympiad Invitational</strong> — one of the largest collegiate-hosted invitationals in the country — for two consecutive years (2024 & 2025). Authored event specifications, proctored timed trials, and evaluated submissions across hundreds of competing high school teams, upholding academic rigor while creating an energizing environment for student competitors.</p>
+          <div class="exp-tags"><span class="exp-tag">STEM Outreach</span><span class="exp-tag">Competition Design</span><span class="exp-tag">Academic Leadership</span></div>
+        </div>
+      </div>
 
-    // crossfade bg layers
-    Object.keys(bgLayers).forEach(k => {
-      if(k === season) bgLayers[k].classList.add('active');
-      else bgLayers[k].classList.remove('active');
-    });
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">Jan 2025 — Present</div>
+          <div class="exp-org">USC Viterbi Graduate Programs</div>
+        </div>
+        <div>
+          <div class="exp-role">Graduate Peer Mentor</div>
+          <p class="exp-desc">Transitioned from mentee to mentor within USC Viterbi's Graduate Mentorship Program, now guiding undergraduate and incoming MS students through the intellectual and cultural demands of graduate study in engineering. Completed structured training in the LISTEN framework (culturally intelligent dialogue), professional boundary-setting, and longitudinal mentorship strategy. Actively supporting the next cohort across two consecutive semesters.</p>
+          <div class="exp-tags"><span class="exp-tag">Graduate Mentorship</span><span class="exp-tag">Cross-cultural Communication</span><span class="exp-tag">USC Viterbi</span></div>
+        </div>
+      </div>
 
-    // toggle accessory groups
-    scarfGroup.style.opacity = (season === 'winter') ? 1 : 0;
-    petalsGroup.style.opacity = (season === 'spring') ? 1 : 0;
-    umbrellaGroup.style.opacity = (season === 'rainy') ? 1 : 0;
-    glassesGroup.style.opacity = (season === 'ai') ? 1 : 0;
-    aiNodes.style.opacity = (season === 'ai') ? 1 : 0;
-    sunflare.style.opacity = (season === 'summer') ? 1 : 0;
+      <div class="exp-entry">
+        <div class="exp-meta">
+          <div class="exp-date">Jun 2021 — May 2022</div>
+          <div class="exp-org">Events Management Club, VIT</div>
+        </div>
+        <div>
+          <div class="exp-role">Events Coordinator</div>
+          <p class="exp-desc">Coordinated end-to-end planning and execution of multiple large-scale campus events across a year-long tenure with the Events Management Club at VIT Chennai. Owned logistics, budget allocation, cross-club partnerships, and event marketing — delivering experiences for a campus community of thousands while developing operational leadership under real constraints.</p>
+          <div class="exp-tags"><span class="exp-tag">Event Operations</span><span class="exp-tag">Budget Management</span><span class="exp-tag">Cross-functional Collaboration</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    // animate breath for winter
-    if(season === 'winter'){ animateBreath(true); } else animateBreath(false);
+  <!-- PROJECTS -->
+  <section class="t-section" id="t-projects">
+    <div class="t-section-label">What I've built</div>
+    <h2 class="t-section-title">Selected <em>Projects</em></h2>
+    <div class="proj-grid">
 
-    // position dog by season (balanced positions)
-    setDogPositionForSeason(season);
+      <div class="proj-card reveal">
+        <div class="proj-status-badge ongoing">● Ongoing</div>
+        <div class="proj-title">Deep CNN Framework — Terrain Segmentation & Obstacle Detection</div>
+        <p class="proj-desc">Developing a production-oriented CNN pipeline for pixel-level terrain segmentation and real-time obstacle detection in unstructured outdoor environments. Tackles the core challenge of autonomous navigation in label-scarce settings — incorporating semi-supervised learning strategies and architecture ablations across encoder-decoder variants (U-Net, DeepLab). Motivated by real-world deployment constraints from the AUV research work.</p>
+        <div class="proj-tags"><span class="proj-tag">PyTorch</span><span class="proj-tag">Semantic Segmentation</span><span class="proj-tag">U-Net / DeepLab</span><span class="proj-tag">Computer Vision</span><span class="proj-tag">Semi-supervised Learning</span></div>
+      </div>
 
-    // start background animation for the season
-    startBgAnimation(season);
+      <div class="proj-card reveal">
+        <div class="proj-status-badge completed">✓ Completed</div>
+        <div class="proj-title">DreamWeaver — Multi-Agent LLM Storytelling Engine</div>
+        <p class="proj-desc">Architected a multiplayer agentic narrative engine where specialized LLM-based agents (narrator, world-builder, character controller) collaborate across long-horizon story arcs with persistent state. Built on Google ADK with a Flask web interface — each agent maintains independent context while shared state synchronizes the game world. Demonstrates practical multi-agent orchestration beyond toy examples.</p>
+        <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">Google ADK</span><span class="proj-tag">Multi-Agent Systems</span><span class="proj-tag">LLM Orchestration</span><span class="proj-tag">Flask</span><span class="proj-tag">State Management</span></div>
+      </div>
 
-    // reflect mode panel label
-    updateModeBtnLabel(state.mode);
-  }
+      <div class="proj-card reveal">
+        <div class="proj-status-badge completed">✓ Completed</div>
+        <div class="proj-title">Misconception Classifier — Parameter-Efficient LLM Fine-tuning</div>
+        <p class="proj-desc">Designed a dual-track NLP classification system for educational misconception detection. Track A: LoRA-fine-tuned Qwen with 4-bit quantization (QLoRA) for generative classification. Track B: DeBERTa-v3 with adapter layers for discriminative ranking. Achieved <strong>92.5% accuracy</strong> and stable MAP@3 under GPU memory constraints — demonstrating that efficient fine-tuning rivals full-parameter approaches at a fraction of the compute cost.</p>
+        <div class="proj-tags"><span class="proj-tag">LoRA / QLoRA</span><span class="proj-tag">DeBERTa-v3</span><span class="proj-tag">Qwen</span><span class="proj-tag">vLLM</span><span class="proj-tag">HuggingFace PEFT</span><span class="proj-tag">MAP@3</span></div>
+      </div>
 
-  function updateModeBtnLabel(mode){
-    // show label
-    modeBtn.textContent = (mode === 'auto') ? 'Mode ▾ (Auto)' : `Mode ▾ (${capitalize(mode)})`;
-  }
+      <div class="proj-card reveal">
+        <div class="proj-status-badge completed">✓ Completed</div>
+        <div class="proj-title">UNIX-Style OS Kernel — from Scratch in C</div>
+        <p class="proj-desc">Implemented a UNIX-style operating system kernel in C, building core subsystems from the ground up: process lifecycle management, preemptive kernel threading with synchronization primitives, a layered virtual filesystem (VFS) abstraction supporting multiple backing stores, and demand-paged virtual memory with page fault handling. Every abstraction hand-rolled — no shortcuts, no libraries. Deepened fluency in how software actually runs on hardware.</p>
+        <div class="proj-tags"><span class="proj-tag">C</span><span class="proj-tag">Kernel Development</span><span class="proj-tag">Virtual Memory / Paging</span><span class="proj-tag">Threading & Synchronization</span><span class="proj-tag">VFS</span></div>
+      </div>
 
-  function capitalize(s){ if(!s) return ''; return s[0].toUpperCase()+s.slice(1); }
+      <div class="proj-card reveal">
+        <div class="proj-status-badge completed">✓ Completed</div>
+        <div class="proj-title">Scalable 4K Video Panorama Pipeline</div>
+        <p class="proj-desc">Built a parallelized video panorama stitching system capable of processing 4K footage using Python multiprocessing for concurrent frame extraction. Implemented SIFT feature detection + FLANN matching, RANSAC-based homography estimation, and multi-band Laplacian blending with inpainting for seamless seam removal. Designed with throughput and output quality in equal measure — handles variable frame rates and overlap percentages gracefully.</p>
+        <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">OpenCV</span><span class="proj-tag">SIFT + RANSAC</span><span class="proj-tag">Laplacian Blending</span><span class="proj-tag">Multiprocessing</span></div>
+      </div>
 
-  /* dog position and animation tuning */
-  function setDogPositionForSeason(season){
-    // desktop positions (left/right offset) — change for smaller screens via media queries in CSS
-    const base = dogAnim.style;
-    // ensure dog visible
-    document.querySelectorAll('.dog-anim').forEach(el => el.classList.remove('hidden'));
+      <div class="proj-card reveal">
+        <div class="proj-status-badge completed">✓ Completed</div>
+        <div class="proj-title">AnalytiBot — Multimodal RAG Chatbot</div>
+        <p class="proj-desc">Built a retrieval-augmented, multimodal chatbot supporting text and voice input across heterogeneous document types (PDFs, DOCX, HTML, Excel). LangChain orchestrates document ingestion, chunking, and vector retrieval; OpenAI handles generation. The Excel analysis module performs programmatic statistical summaries — translating spreadsheet data into natural language insights. End-to-end pipeline from raw document to grounded, cited answer.</p>
+        <div class="proj-tags"><span class="proj-tag">LangChain</span><span class="proj-tag">RAG</span><span class="proj-tag">OpenAI</span><span class="proj-tag">Speech Recognition</span><span class="proj-tag">Pandas</span><span class="proj-tag">Streamlit</span></div>
+      </div>
 
-    switch(season){
-      case 'winter':
-        base.left = '62%';
-        base.bottom = '8%';
-        dogStage.style.transform = 'scale(1) translateY(0)';
-        break;
-      case 'spring':
-        base.left = '58%';
-        base.bottom = '10%';
-        dogStage.style.transform = 'scale(1.02) translateY(-4px)';
-        break;
-      case 'summer':
-        base.left = '20%';
-        base.bottom = '6%';
-        dogStage.style.transform = 'scale(1.02) translateY(0)';
-        break;
-      case 'rainy':
-        base.left = '62%';
-        base.bottom = '14%';
-        dogStage.style.transform = 'scale(0.98) translateY(6px)';
-        break;
-      case 'ai':
-        base.left = '62%';
-        base.bottom = '18%';
-        dogStage.style.transform = 'scale(1.03) translateY(-6px)';
-        break;
-      default:
-        base.left='62%'; base.bottom='10%';
-    }
-  }
+      <div class="proj-card reveal">
+        <div class="proj-status-badge completed">✓ Completed</div>
+        <div class="proj-title">CKD Clinical Decision Support System</div>
+        <p class="proj-desc">End-to-end ML system for early Chronic Kidney Disease detection — from raw EHR-style patient records to a deployed clinical tool. Trained a soft-voting ensemble (Random Forest, SVM, Gradient Boosting) achieving <strong>98% accuracy</strong> on held-out data. Wrapped in a Flask REST API with a clinician-facing dashboard featuring SHAP waterfall plots for per-patient explainability. Built for adoption, not just accuracy.</p>
+        <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">Voting Ensemble</span><span class="proj-tag">SHAP Explainability</span><span class="proj-tag">Flask API</span><span class="proj-tag">Clinical ML</span></div>
+      </div>
 
-  /* breath puff animation (winter) */
-  function animateBreath(enable){
-    if(!breathGroup) return;
-    const circles = Array.from(breathGroup.querySelectorAll('circle'));
-    if(enable){
-      // animate via JS timeline
-      circles.forEach((c, i) => {
-        c.animate([
-          { opacity: 0, transform: 'translateY(0) scale(0.6)' },
-          { opacity: 0.9 - i*0.25, transform: 'translateY(-14px) scale(1)' },
-          { opacity: 0, transform: 'translateY(-30px) scale(1.4)' }
-        ], { duration: 1600 + i*180, iterations: Infinity, delay: i*200, easing:'cubic-bezier(.2,.9,.2,1)' });
-      });
-    } else {
-      circles.forEach(c => c.getAnimations().forEach(a => a.cancel()));
-      circles.forEach(c => c.style.opacity = 0);
-    }
-  }
+    </div>
+    <div style="text-align:center;margin-top:48px;">
+      <a href="https://github.com/Lexi-cod?tab=repositories" target="_blank" class="t-btn t-btn-ghost">View All on GitHub →</a>
+    </div>
+  </section>
 
-  /* ----------- canvas background animations ----------- */
-  let w = canvas.width = innerWidth;
-  let h = canvas.height = innerHeight;
-  window.addEventListener('resize', () => { w = canvas.width = innerWidth; h = canvas.height = innerHeight; });
+  <!-- EXTRACURRICULARS -->
+  <section class="t-section" id="t-extra">
+    <div class="t-section-label">Leadership & Activities</div>
+    <h2 class="t-section-title">Extra<em>curriculars</em></h2>
+    <div class="extra-grid">
+      <div class="extra-card reveal">
+        <span class="extra-icon">🔬</span>
+        <div class="extra-title">USC Science Olympiad Invitational</div>
+        <div class="extra-role-badge">Event Supervisor · 2024 & 2025</div>
+        <p class="extra-desc">Designed and proctored competitive STEM events at one of the country's largest Science Olympiad Invitationals — two years in a row. Brought rigor and encouragement to hundreds of competing high schoolers.</p>
+      </div>
+      <div class="extra-card reveal">
+        <span class="extra-icon">🤝</span>
+        <div class="extra-title">Viterbi Graduate Mentorship Program</div>
+        <div class="extra-role-badge">Peer Mentor · USC</div>
+        <p class="extra-desc">Mentoring undergrads and incoming grad students through academic transitions. Completed formal training in culturally intelligent mentorship — proud to give back what was given to me.</p>
+      </div>
+      <div class="extra-card reveal">
+        <span class="extra-icon">🎪</span>
+        <div class="extra-title">TechnoVIT Chennai — Stage Committee</div>
+        <div class="extra-role-badge">Team Coordinator</div>
+        <p class="extra-desc">Led stage operations for one of VIT's largest annual festivals. Managed a committee team, delegated tasks, and coordinated live performances and presentations for thousands of attendees.</p>
+      </div>
+      <div class="extra-card reveal">
+        <span class="extra-icon">📋</span>
+        <div class="extra-title">Events Management Club, VIT</div>
+        <div class="extra-role-badge">Event Coordinator · 2021–2022</div>
+        <p class="extra-desc">Coordinated logistics, budgeting, and cross-club collaboration for multiple large-scale campus events. Built skills in operations, marketing, and team communication that I still use every day.</p>
+      </div>
+      <div class="extra-card reveal">
+        <span class="extra-icon">✍️</span>
+        <div class="extra-title">Telugu Literary Association (TLC)</div>
+        <div class="extra-role-badge">Member · VIT Chennai</div>
+        <p class="extra-desc">Active member of the Telugu Literary Club — celebrating language, culture, and creative expression through performances, writing, and cultural events on campus.</p>
+      </div>
+    </div>
+  </section>
 
-  let animId = null;
-  let particles = [];
+  <!-- RESEARCH -->
+  <section class="t-section" id="t-research">
+    <div class="t-section-label">What I'm exploring</div>
+    <h2 class="t-section-title"><em>Research</em> &<br>Interests</h2>
+    <div class="research-layout">
+      <div class="research-card reveal">
+        <div class="research-num">01</div>
+        <div class="research-title">Perception & Planning for Autonomous Systems</div>
+        <p class="research-body">Exploring the gap between lab-grade robotics and real-world deployment — particularly in GPS-denied and visually degraded environments. Current focus: integrating semantic segmentation outputs directly into motion planning loops, bridging computer vision and classical planning (A*, potential fields) for coherent autonomous behavior.</p>
+        <div class="research-status">Active — Ongoing</div>
+      </div>
+      <div class="research-card reveal">
+        <div class="research-num">02</div>
+        <div class="research-title">Efficient LLM Fine-tuning & Alignment</div>
+        <p class="research-body">Investigating parameter-efficient fine-tuning (PEFT) methods — LoRA, QLoRA, adapter layers — for adapting large language models to specialized domains under real compute constraints. Interested in how quantization and alignment techniques interact, and what it takes to make fine-tuned models behave reliably in safety-critical or high-stakes applications.</p>
+        <div class="research-status">Active — Current Work</div>
+      </div>
+      <div class="research-card reveal">
+        <div class="research-num">03</div>
+        <div class="research-title">Explainable ML for Clinical Decision Support</div>
+        <p class="research-body">Focused on the trust gap between high-performing ML models and clinical adoption. How do you build a system that a physician will actually use? Interested in post-hoc explainability (SHAP, LIME), calibration under distribution shift, and the design of human-in-the-loop systems that augment — rather than replace — expert judgment.</p>
+        <div class="research-status">Explored — Open to Collabs</div>
+      </div>
+      <div class="research-card reveal">
+        <div class="research-num">04</div>
+        <div class="research-title">Multi-Agent LLM Orchestration</div>
+        <p class="research-body">Studying the coordination challenges that emerge when multiple LLM-based agents share a task: state consistency, role specialization, failure propagation, and emergent behavior. Practically motivated by DreamWeaver. Theoretically interested in how agent communication protocols and memory architectures affect coherence over long task horizons.</p>
+        <div class="research-status">Active — DreamWeaver & Beyond</div>
+      </div>
+    </div>
+  </section>
 
-  function stopAnim(){ if(animId) cancelAnimationFrame(animId); particles = []; }
+  <!-- CONTACT -->
+  <section class="t-section" id="t-contact">
+    <div class="t-section-label">Get in touch</div>
+    <h2 class="t-section-title">Let's Build<br><em>Something</em></h2>
+    <div class="t-contact-inner">
+      <div class="t-contact-left reveal">
+        <p>Open to research collaborations, SWE/ML internships, and full-time roles starting <strong>Summer 2026</strong>. If you're working on applied ML, NLP, autonomous systems, or AI infrastructure — I want to hear about it. I respond to every message.</p>
+        <div class="contact-links">
+          <a class="contact-link" href="/cdn-cgi/l/email-protection#a8c6c9c4c9cfc9c6cce8dddbcb86cdccdd">✉&nbsp;&nbsp;<span class="__cf_email__" data-cfemail="18767974797f79767c586d6b7b367d7c6d">[email&#160;protected]</span></a>
+          <a class="contact-link" href="https://linkedin.com/in/alekya-ramani-nalagandla" target="_blank">in&nbsp;&nbsp;linkedin.com/in/alekya-ramani-nalagandla</a>
+          <a class="contact-link" href="https://github.com/Lexi-cod?tab=repositories" target="_blank">⌥&nbsp;&nbsp;github.com/Lexi-cod</a>
+          <a class="contact-link" href="https://nalagand.usc.edu" target="_blank">✦&nbsp;&nbsp;Blog / Writing</a>
+        </div>
+      </div>
+      <div class="t-contact-form reveal">
+        <input class="t-input" type="text" placeholder="Your name">
+        <input class="t-input" type="email" placeholder="Your email">
+        <input class="t-input" type="text" placeholder="Subject — what's this about?">
+        <textarea class="t-input" placeholder="Your message..."></textarea>
+        <button class="t-btn t-btn-primary" style="width:100%;text-align:center;" onclick="alert('Hook this up to Formspree.io or EmailJS for real email delivery!')">Send Message</button>
+      </div>
+    </div>
+  </section>
 
-  /* snow */
-  function startSnow(){
-    stopAnim();
-    particles = Array.from({length:120}).map(()=>({
-      x: Math.random()*w,
-      y: Math.random()*h,
-      r: 0.8 + Math.random()*2.6,
-      vy: 0.6 + Math.random()*1.1,
-      vx: -0.3 + Math.random()*0.6,
-      a: 0.6 + Math.random()*0.35
-    }));
-    function loop(){
-      ctx.clearRect(0,0,w,h);
-      particles.forEach(p=>{
-        p.x += p.vx; p.y += p.vy;
-        if(p.y > h+10){ p.y = -10; p.x = Math.random()*w; }
-        ctx.globalAlpha = p.a;
-        ctx.fillStyle = '#fff';
-        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-      animId = requestAnimationFrame(loop);
-    }
-    loop();
-  }
+  <footer class="t-footer">
+    <p>© 2025 Alekya "Lexi" Nalagandla</p>
+    <p>USC CS '26 ✦ Want the real me? Hit 🎵 Lexi above</p>
+  </footer>
+</div>
 
-  /* petals */
-  function startPetals(){
-    stopAnim();
-    particles = Array.from({length:80}).map(()=>({
-      x: Math.random()*w,
-      y: Math.random()*h,
-      r: 10 + Math.random()*10,
-      vy: 0.6 + Math.random()*0.8,
-      angle: Math.random()*Math.PI*2,
-      vx: -0.6 + Math.random()*1.2,
-      hue: 320 + Math.random()*60
-    }));
-    function loop(){
-      ctx.clearRect(0,0,w,h);
-      particles.forEach(p=>{
-        p.y += p.vy; p.x += p.vx + Math.sin(p.angle)*0.6; p.angle += 0.02;
-        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(Math.sin(p.angle));
-        ctx.fillStyle = `hsl(${p.hue},70%,70%)`; ctx.beginPath(); ctx.ellipse(0,0,p.r*0.6,p.r,0,0,Math.PI*2); ctx.fill();
-        ctx.restore();
-        if(p.y > h+40){ p.y = -40; p.x = Math.random()*w; }
-      });
-      animId = requestAnimationFrame(loop);
-    }
-    loop();
-  }
 
-  /* warm shimmer (summer) */
-  function startSun(){
-    stopAnim();
-    particles = Array.from({length:60}).map(()=>({
-      x: Math.random()*w,
-      y: Math.random()*h*0.6,
-      r: 30 + Math.random()*80,
-      vy: 0.02 + Math.random()*0.16,
-      a: Math.random()*0.22 + 0.05
-    }));
-    function loop(){
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle = 'rgba(255,244,220,0.04)'; ctx.fillRect(0,0,w,h);
-      particles.forEach(p=>{
-        p.y += p.vy; if(p.y > h){ p.y = -p.r; p.x = Math.random()*w; }
-        const grad = ctx.createRadialGradient(p.x,p.y,p.r*0.1,p.x,p.y,p.r);
-        grad.addColorStop(0, `rgba(255,220,120,${p.a})`); grad.addColorStop(1, 'rgba(255,220,120,0)');
-        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-      });
-      animId = requestAnimationFrame(loop);
-    }
-    loop();
-  }
+<!-- ████████████████████████████████████
+     PERSONAL PORTFOLIO
+████████████████████████████████████ -->
+<div class="portfolio" id="personal">
 
-  /* rain */
-  function startRain(){
-    stopAnim();
-    particles = Array.from({length:220}).map(()=>({
-      x: Math.random()*w, y: Math.random()*h, l: 10 + Math.random()*18, vy: 4 + Math.random()*6, alpha: 0.12 + Math.random()*0.28, skew: -1.0 - Math.random()*0.6
-    }));
-    function loop(){
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle = 'rgba(6,12,20,0.04)'; ctx.fillRect(0,0,w,h);
-      particles.forEach(p=>{
-        p.x += p.skew; p.y += p.vy;
-        if(p.y > h+20){ p.y = -20; p.x = Math.random()*w; }
-        ctx.beginPath(); ctx.strokeStyle = `rgba(190,230,240,${p.alpha})`; ctx.lineWidth=1.2;
-        ctx.moveTo(p.x,p.y); ctx.lineTo(p.x - p.skew*2, p.y - p.l); ctx.stroke();
-      });
-      animId = requestAnimationFrame(loop);
-    }
-    loop();
-  }
+  <nav class="f-nav">
+    <div class="f-logo">✦ Lexi ✦</div>
+    <ul class="f-links">
+      <li><a href="#f-about">me!</a></li>
+      <li><a href="#f-interests">interests</a></li>
+      <li><a href="#f-gallery">moments</a></li>
+      <li><a href="#f-contact">say hi 👋</a></li>
+    </ul>
+  </nav>
 
-  /* AI net */
-  function startAI(){
-    stopAnim();
-    const cols = Math.max(8, Math.floor(w/120));
-    const rows = Math.max(5, Math.floor(h/140));
-    const nodes = [];
-    for(let r=0;r<rows;r++){
-      for(let c=0;c<cols;c++){
-        nodes.push({
-          x:(c+0.5)*(w/cols)+(Math.random()-0.5)*40,
-          y:(r+0.5)*(h/rows)+(Math.random()-0.5)*30,
-          r:2 + Math.random()*3, phase: Math.random()*Math.PI*2
-        });
-      }
-    }
-    function loop(t){
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle='rgba(2,6,14,0.06)'; ctx.fillRect(0,0,w,h);
-      ctx.globalCompositeOperation='lighter';
-      for(let i=0;i<nodes.length;i++){
-        const a = nodes[i];
-        for(let j=i+1;j<Math.min(i+10,nodes.length);j++){
-          const b = nodes[j];
-          const dx=a.x-b.x, dy=a.y-b.y, dist=Math.hypot(dx,dy);
-          if(dist < 180){
-            ctx.strokeStyle = `rgba(90,170,255,${1-dist/180})`; ctx.lineWidth=0.9; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-          }
-        }
-      }
-      nodes.forEach(n=>{
-        const p = 0.9 + Math.sin(t/600 + n.phase)*0.2;
-        const glow = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,18);
-        glow.addColorStop(0, `rgba(120,190,255,${0.12*p})`); glow.addColorStop(1, 'rgba(120,190,255,0)');
-        ctx.fillStyle = glow; ctx.fillRect(n.x-18,n.y-18,36,36);
-        ctx.beginPath(); ctx.fillStyle = `rgba(150,210,255,${0.9*p})`; ctx.arc(n.x,n.y,n.r*p+0.6,0,Math.PI*2); ctx.fill();
-      });
-      ctx.globalCompositeOperation='source-over';
-      animId = requestAnimationFrame(loop);
-    }
-    loop(0);
-  }
+  <!-- HERO -->
+  <section class="f-hero">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="f-hero-content">
+      <p class="f-wave-greeting">👋 hey there, i'm</p>
+      <h1 class="f-hero-name"><span class="f-name-lexi">Lexi</span><br>Nalagandla</h1>
+      <p class="f-hero-tagline">maker of <span>music</span>, chaser of light ✨</p>
+      <div class="f-emoji-row">
+        <span title="Ukulele">🪗</span>
+        <span title="Photography">📷</span>
+        <span title="Singing">🎤</span>
+        <span title="Music">🎵</span>
+        <span title="Golden hour">🌅</span>
+      </div>
+      <p class="f-scroll-hint">↓ scroll to meet me ↓</p>
+    </div>
+  </section>
 
-  function startBgAnimation(season){
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) { stopAnim(); ctx.clearRect(0,0,w,h); return; }
-    switch(season){
-      case 'winter': startSnow(); break;
-      case 'spring': startPetals(); break;
-      case 'summer': startSun(); break;
-      case 'rainy': startRain(); break;
-      case 'ai': startAI(); break;
-      default: startPetals();
-    }
-  }
+  <!-- ABOUT -->
+  <section class="f-section" id="f-about">
+    <div class="f-section-label">✦ who is lexi?</div>
+    <h2 class="f-section-title">A little bit<br>about <span class="pop">me!</span></h2>
+    <div class="f-about-box reveal">
+      <div class="f-about-text">
+        <p>Hi! I'm <strong>Alekya — but please, call me Lexi.</strong> When I'm not deep in research papers or running campus orgs, you'll find me strumming a ukulele, hunting for the perfect golden-hour shot, or belting songs when I think no one's listening.</p>
+        <p>I believe creativity and curiosity are the same thing wearing different hats. <strong>Music keeps me grounded. Photography keeps me present. Singing keeps me brave.</strong></p>
+        <p>This is the side of me that doesn't fit on a resume — and honestly? It might be the best part. Welcome to my corner 🌸</p>
+      </div>
+      <div class="f-about-deco">🌸</div>
+    </div>
+  </section>
 
-  /* ----------------- mode controls ----------------- */
-  function initControls(){
-    // mode button toggle
-    modeBtn.addEventListener('click', e => {
-      const open = modePanel.classList.toggle('open');
-      modeBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      modePanel.setAttribute('aria-hidden', open ? 'false' : 'true');
-    });
+  <!-- INTERESTS -->
+  <section class="f-section" id="f-interests">
+    <div class="f-section-label">✦ my worlds</div>
+    <h2 class="f-section-title">Things that<br><span class="pop">light me up</span> 🔥</h2>
+    <div class="interests-grid">
 
-    // options
-    options.forEach(opt => {
-      opt.addEventListener('click', () => {
-        const mode = opt.dataset.mode;
-        if(mode === 'auto'){ state.mode = 'auto'; localStorage.setItem('site_mode','auto'); state.manual=false; localStorage.setItem('site_manual','false'); }
-        else { state.mode = mode; localStorage.setItem('site_mode',mode); state.manual=true; localStorage.setItem('site_manual','true'); }
-        applyMode(state.mode);
-        modePanel.classList.remove('open');
-        modeBtn.setAttribute('aria-expanded','false');
-      });
-    });
+      <div class="interest-card uke reveal">
+        <span class="interest-emoji">🪗</span>
+        <div class="interest-title">Ukulele</div>
+        <div class="interest-subtitle">my tiny four-stringed best friend</div>
+        <p class="interest-desc">There's something magical about the ukulele — it's joyful by nature. I picked it up and fell in love immediately. I play everything from feel-good indie to classic songs that hit different at 2am.</p>
+        <div class="interest-tag-row">
+          <span class="f-tag f-tag-y">🎶 Self-taught</span>
+          <span class="f-tag f-tag-y">Fingerpicking</span>
+          <span class="f-tag f-tag-y">Indie / Pop</span>
+        </div>
+      </div>
 
-    // click outside to close
-    document.addEventListener('click', e => {
-      if(!modePanel.contains(e.target) && !modeBtn.contains(e.target)){
-        modePanel.classList.remove('open'); modeBtn.setAttribute('aria-expanded','false');
-      }
-    });
-  }
+      <div class="interest-card photo reveal">
+        <span class="interest-emoji">📷</span>
+        <div class="interest-title">Photography</div>
+        <div class="interest-subtitle">chasing light, collecting moments</div>
+        <p class="interest-desc">Photography taught me to slow down and actually look. I'm drawn to candid shots, dramatic shadows, and that brief golden hour when everything glows. My camera is always within reach.</p>
+        <div class="interest-tag-row">
+          <span class="f-tag f-tag-m">🌅 Golden Hour</span>
+          <span class="f-tag f-tag-m">Candid</span>
+          <span class="f-tag f-tag-m">Portrait</span>
+        </div>
+      </div>
 
-  /* initial load: decide mode */
-  function initial(){
-    const saved = localStorage.getItem('site_mode') || 'auto';
-    const manualSaved = localStorage.getItem('site_manual') === 'true';
-    state.manual = manualSaved;
-    state.mode = saved;
-    if(saved === 'auto'){ state.mode = 'auto'; applyMode('auto'); }
-    else { applyMode(saved); }
-    initControls();
+      <div class="interest-card sing reveal">
+        <span class="interest-emoji">🎤</span>
+        <div class="interest-title">Singing</div>
+        <div class="interest-subtitle">my loudest, most joyful self</div>
+        <p class="interest-desc">Singing is where I feel the most free. Whether I'm harmonizing in the car, humming while cooking, or performing — it's pure joy. Music is a language I've spoken my whole life.</p>
+        <div class="interest-tag-row">
+          <span class="f-tag f-tag-p">🎵 Indie / R&B</span>
+          <span class="f-tag f-tag-p">Harmonies</span>
+          <span class="f-tag f-tag-p">Carnatic Roots</span>
+        </div>
+      </div>
 
-    // re-evaluate auto every minute to gracefully change season when a visitor crosses seasonal boundary
-    setInterval(() => {
-      const stored = localStorage.getItem('site_mode') || 'auto';
-      const manual = localStorage.getItem('site_manual') === 'true';
-      if(!manual && stored === 'auto'){ applyMode('auto'); }
-    }, 60*1000);
-  }
+    </div>
+  </section>
 
-  /* small accessibility & reduced motion behaviors handled already */
+  <!-- GALLERY -->
+  <section class="f-section" id="f-gallery">
+    <div class="f-section-label">✦ captured moments</div>
+    <h2 class="f-section-title">A few of my<br><span class="pop">favorites</span> 📸</h2>
+    <div class="f-gallery-grid reveal">
+      <div class="gallery-tile">📷<span class="tile-lbl">Golden Hour Walk</span></div>
+      <div class="gallery-tile">🪗<span class="tile-lbl">Late Night Strums</span></div>
+      <div class="gallery-tile">🌸<span class="tile-lbl">In Bloom</span></div>
+      <div class="gallery-tile">🎤<span class="tile-lbl">Open Mic Night</span></div>
+      <div class="gallery-tile">🌅<span class="tile-lbl">Sunset Chasing</span></div>
+    </div>
+    <p style="text-align:center;margin-top:20px;font-family:'Caveat',cursive;font-size:16px;color:var(--f-muted);">
+      ↑ swap the emoji tiles with your own &lt;img&gt; tags! ↑
+    </p>
+  </section>
 
-  /* kick off */
-  initial();
+  <!-- CONTACT -->
+  <section class="f-section" id="f-contact">
+    <div class="f-section-label">✦ say hey!</div>
+    <h2 class="f-section-title" style="text-align:center;">Let's be<br><span class="pop">friends!</span> 🌻</h2>
+    <div class="f-contact-inner reveal">
+      <p>Want to jam on ukulele, collab on a photo project, swap playlists, or just send a nice message? <strong>All good vibes welcome.</strong></p>
+      <div class="f-btn-row">
+        <a class="f-btn f-btn-coral" href="/cdn-cgi/l/email-protection#94edfbe1e6d4f1f9f5fdf8baf7fbf9">✉ Send me a note</a>
+        <a class="f-btn f-btn-outline" href="https://instagram.com/yourhandle" target="_blank">📸 @yourhandle</a>
+        <button class="f-btn f-btn-purple" onclick="showPortfolio('tech')">💻 See my tech side</button>
+      </div>
+    </div>
+  </section>
 
+  <footer class="f-footer">
+    <p>✦ made with love & ukulele strums by Lexi ✦</p>
+    <p>🪗 🎤 📷 🌸</p>
+  </footer>
+</div>
+
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── PORTFOLIO SWITCH ── */
+function showPortfolio(mode) {
+  document.querySelectorAll('.portfolio').forEach(p => p.classList.remove('active'));
+  document.getElementById(mode).classList.add('active');
+  document.getElementById('btn-tech').classList.toggle('active', mode === 'tech');
+  document.getElementById('btn-fun').classList.toggle('active', mode === 'personal');
+  document.body.classList.toggle('fun-mode', mode === 'personal');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(observeReveal, 150);
+}
+
+/* ── CUSTOM CURSOR ── */
+const dot = document.getElementById('dot');
+const ring = document.getElementById('ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx+'px'; dot.style.top = my+'px'; });
+(function loop() {
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(loop);
 })();
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a,button,.interest-card,.extra-card,.research-card,.gallery-tile')) {
+    ring.style.transform = 'translate(-50%,-50%) scale(1.7)'; ring.style.opacity = '0.9';
+    dot.style.transform = 'translate(-50%,-50%) scale(0.5)';
+  } else {
+    ring.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.opacity = '0.5';
+    dot.style.transform = 'translate(-50%,-50%) scale(1)';
+  }
+});
+
+/* ── SCROLL REVEAL ── */
+function observeReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('#' + (document.querySelector('.portfolio.active').id) + ' .reveal').forEach(el => {
+    el.classList.remove('visible');
+    obs.observe(el);
+  });}
+observeReveal();
+
+/* ── STAGGER GRIDS ── */
+document.querySelectorAll('.extra-grid .extra-card, .research-layout .research-card, .interests-grid .interest-card, .proj-grid .proj-card').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.1) + 's';
+});
 </script>
 </body>
 </html>
